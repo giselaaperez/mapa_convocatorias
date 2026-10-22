@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "titulo": "Mapa de convocatorias de colaboración universidad-empresa",
+  "convocatorias": [
+    {
+      "id": "cdti-misiones-2026",
+      "nombre": "Misiones Ciencia e Innovación",
+      "organismo": "CDTI",
+      "tipo": "I+D colaborativa",
+      "edicion": "2026",
+      "resumen": "Proyectos de I+D en cooperación liderados por empresas, encuadrados en 7 misiones estratégicas.",
+      "apertura": "2026-05-12",
+      "cierre": "2026-06-12",
+      "resolucion": "2026-11",
+      "resolucionTxt": "",
+      "fechasProvisionales": false,
+      "estadoManual": "",
+      "presupuesto": 60,
+      "participacionUPO": "Subcontratación",
+      "subvencion": "Hasta 80 / 75 / 65 % según tamaño de empresa (resumen); máx. 70 % (ficha)",
+      "tags": ["Energía", "Aeronáutica", "Antimicrobianos", "Defensa", "Salud de la mujer", "Alimentación", "Vivienda"],
+      "enlace": "https://www.cdti.es/ayudas/misiones-ciencia-e-innovacion-2026",
+      "contacto": "otri@upo.es · misiones@cdti.es",
+      "imagen": "img/CDTI_MISIONES_2026_RESUMEN.png",
+      "datosClave": [
+        {"k": "Presupuesto", "v": "60 M€ (ampliable hasta 150 M€); +80 M€ de ampliación para Seguridad y Defensa según el resumen"},
+        {"k": "Consorcio", "v": "3-6 empresas, al menos una pyme; ninguna supera el 70 % del presupuesto"},
+        {"k": "Presupuesto por proyecto", "v": "3,5-10 M€; mínimo 175.000 € por empresa"},
+        {"k": "Subcontratación a universidades y OPIs", "v": "Mínimo 15 % del presupuesto elegible"},
+        {"k": "Duración", "v": "1 ene 2027 - 31 dic 2029 o 31 dic 2030"},
+        {"k": "Memoria técnica", "v": "Máximo 80 páginas"}
+      ],
+      "secciones": [
+        {"titulo": "Objeto", "texto": "Financiación de proyectos de I+D en cooperación liderados por empresas, que propongan soluciones a desafíos transversales y estratégicos de la sociedad española, mejoren la base tecnológica de las empresas y estimulen la colaboración público-privada. Los proyectos deben encuadrarse en alguna de las 7 misiones del Anexo I:\n- Energía: sistema energético estable, flexible y resiliente con redes sólidas y fiables. Gestión inteligente de red, almacenamiento a gran escala e integración de renovables.\n- Aeronáutica: sector más eficiente, sostenible y resiliente. Materiales y procesos para reducción de peso, propulsión ultra-eficiente compatible con SAF y avión más eléctrico (MEA).\n- Resistencia antimicrobiana: nuevas capacidades contra microorganismos multirresistentes (enfoque One Health). Nuevos antimicrobianos, diagnóstico rápido, vigilancia epidemiológica digital, vacunas y tecnologías de escalado.\n- Defensa y seguridad: autonomía estratégica con foco en tecnologías de doble uso: contramedidas NRBQ, sistemas autopropulsados, electrónica de defensa y ciberresiliencia.\n- Salud de la mujer: investigación biosanitaria orientada a patologías con mayor impacto en la mujer: cardiovasculares, oncológicas, autoinmunes, salud mental y enfermedades raras de predominio femenino.\n- Soberanía alimentaria: eficiencia productiva, calidad, sostenibilidad y seguridad alimentaria. Producción sostenible, trazabilidad, nuevos alimentos y cadenas de suministro resilientes.\n- Vivienda: edificación industrializada y digitalizada. Nuevos sistemas constructivos, materiales de bajo impacto y digitalización del proceso edificatorio."},
+        {"titulo": "Beneficiarios y participación de la UPO", "texto": "Agrupaciones de 3 a 6 empresas; al menos dos de ellas autónomas entre sí, con domicilio fiscal en España (o establecimiento/sucursal en territorio español). Al menos una pyme. Ninguna empresa autónoma puede superar el 70 % del presupuesto elegible.\n\nUPO: puede participar como entidad subcontratada. El consorcio debe subcontratar al menos el 15 % del presupuesto total elegible a organismos de investigación (universidades, OPIs, institutos sanitarios, centros tecnológicos...).\n\nImportante: Misiones CI financia proyectos de I+D liderados por empresas. La UPO no puede ser miembro de la agrupación empresarial, sólo entidad subcontratada por uno de sus miembros."},
+        {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: colaborativos, liderados por empresas\n- Modalidad de participación de la UPO: subcontratación\n- Ámbito: territorial nacional\n- Duración: del 1 de enero de 2027 al 31 de diciembre de 2029 o al 31 de diciembre de 2030\n- Presupuesto del proyecto: entre 3.500.000 € y 10.000.000 €; mínimo 175.000 € por empresa\n- Presupuesto de la convocatoria 2026: 60.000.000 € (ampliable hasta 150 M€). Aeronáutica: mínimo 20.000.000 €. Salud de la mujer: mínimo 5.000.000 €\n- Intensidad de ayuda: mínimo 40 % del presupuesto elegible por entidad; intensidad máxima 70 %. La investigación industrial debe ser al menos el 40 % del presupuesto elegible\n- Subcontratación: hasta el 50 % del presupuesto elegible por empresa (hasta el 70 % en proyectos de salud con ensayos preclínicos/clínicos)"},
+        {"titulo": "Criterios de evaluación", "texto": "- Excelencia del consorcio y calidad del proyecto (objetivos, metodología, TRL, nivel de innovación): 0-30 puntos (umbral 15)\n- Impacto (explotación comercial, impacto en la misión-reto, transferencia público-privada): 0-30 puntos (umbral 15)\n- Calidad del plan de trabajo y del equipo (estructura del consorcio, gestión, medios): 0-25 puntos (umbral 12)\n- Impacto socioeconómico, ambiental, perspectiva de género y sostenibilidad: 0-15 puntos\n\nPara ser elegible, la solicitud debe obtener 50 puntos o más."},
+        {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI (https://sede.cdti.gob.es/).\n\nDocumentación: formulario de solicitud de ayuda, programa estratégico (memoria técnica), acuerdo de agrupación, declaraciones responsables, ofertas previas de subcontratación / contrato UPO con anexo técnico y presupuesto.\n\nLa participación de personal investigador de la UPO requiere que la UPO sea entidad subcontratada y se canaliza siempre a través de la OTRI."},
+        {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 12 de mayo al 12 de junio de 2026, a las 12:00 h (hora peninsular). Resolución prevista: noviembre de 2026.\n\nContacta con la OTRI lo antes posible si tienes intención de participar, para preparar la documentación y la propuesta de subcontratación."},
+        {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nConsultas CDTI: misiones@cdti.es"}
+      ],
+      "documentos": [
+        {"id": "d1", "nombre": "Resumen visual Misiones 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/CDTI_MISIONES_2026_RESUMEN.pptx", "nota": ""},
+        {"id": "d2", "nombre": "Ficha OTRI UPO Misiones CI 2026", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_Misiones_CI_2026_2.docx", "nota": ""}
+      ]
+    },
+    {
+      "id": "cdti-innoglobal-2026",
+      "nombre": "Innoglobal",
+      "organismo": "CDTI",
+      "tipo": "Cooperación internacional",
+      "edicion": "2026",
+      "resumen": "Proyectos de I+D de transferencia tecnológica internacional de empresas españolas.",
+      "apertura": "2026-06-17",
+      "cierre": "2026-07-16",
+      "resolucion": "2026-11",
+      "resolucionTxt": "",
+      "fechasProvisionales": false,
+      "estadoManual": "",
+      "presupuesto": 30.25,
+      "participacionUPO": "Subcontratación",
+      "subvencion": "Mínimo 30 % del presupuesto elegible; el máximo depende de tamaño, tipo de I+D y región",
+      "tags": ["Eureka", "Iberoeka", "PRIMA", "Big Science", "FEDER"],
+      "enlace": "https://www.cdti.es/ayudas/innoglobal",
+      "contacto": "otri@upo.es · eureka@cdti.es · accion-exterior@cdti.es · dptoGIPD@cdti.es",
+      "imagen": "img/CDTI_INNOGLOBAL_2026_RESUMEN.png",
+      "datosClave": [
+        {"k": "Presupuesto", "v": "30,25 M€ (CDTI + FEDER); Andalucía 8 M€"},
+        {"k": "Presupuesto mínimo", "v": "175.000 € por empresa beneficiaria"},
+        {"k": "Subcontratación", "v": "Hasta 50 % (hasta 70 % en salud con ensayos preclínicos/clínicos)"},
+        {"k": "Ejecución", "v": "CCAA con fondos FEDER disponibles"},
+        {"k": "Duración", "v": "1 ene 2027 - 31 dic 2028 o 30 jun 2029"},
+        {"k": "Memoria técnica", "v": "Máximo 50 páginas"}
+      ],
+      "secciones": [
+        {"titulo": "Objeto", "texto": "Financiación de proyectos de I+D en cooperación tecnológica internacional para empresas españolas, con el objetivo de mejorar su competitividad mediante la innovación. Los proyectos deben enmarcarse en programas CDTI de cooperación internacional:\n- Programas multilaterales (Eureka, Iberoeka, PRIMA, etc.)\n- Programas bilaterales gestionados por el CDTI\n- Proyectos unilaterales con certificación CDTI\n- Proyectos Big Science (grandes instalaciones científicas internacionales)"},
+        {"titulo": "Beneficiarios y participación de la UPO", "texto": "Pymes y empresas pequeñas de mediana capitalización (hasta 499 empleados que no sean pymes). Grandes empresas: sólo cuando la dirección de desarrollo del proyecto se localice en Canarias.\n\nLas CCAA de ejecución deben contar con fondos FEDER: Andalucía, Castilla-La Mancha, Extremadura, Baleares, Canarias, Castilla y León, Comunidad Valenciana, Galicia, Murcia, Ceuta o Melilla.\n\nUPO: puede participar como entidad subcontratada por una empresa beneficiaria (investigación contractual, conocimientos técnicos, consultoría y servicios equivalentes). La entidad subcontratada no forma parte del consorcio internacional como socio participante.\n\nImportante: INNOGLOBAL financia la participación española en un proyecto de cooperación tecnológica internacional. La empresa debe participar en un proyecto enmarcado en uno de los programas reconocidos por CDTI."},
+        {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: individual (empresa) con dimensión internacional\n- Modalidad de participación de la UPO: subcontratación\n- Ámbito: nacional (CCAA con fondos FEDER disponibles)\n- Duración: del 1 de enero de 2027 al 31 de diciembre de 2028 o al 30 de junio de 2029\n- Presupuesto mínimo: 175.000 € por empresa beneficiaria\n- Presupuesto de la convocatoria 2026: 30.250.000 € (CDTI + FEDER). Andalucía: 8.000.000 €\n- Intensidad de ayuda: mínimo 30 % del presupuesto elegible. El máximo depende del tamaño de la empresa, el tipo de actividad de I+D y la región\n- Subcontratación: hasta el 50 % del presupuesto (hasta el 70 % en proyectos de salud con ensayos preclínicos/clínicos)"},
+        {"titulo": "Criterios de evaluación", "texto": "- Proyección internacional de la propuesta y del consorcio: 0-25 puntos (umbral 12)\n- Capacidad de la empresa española en relación con la propuesta: 0-15 puntos\n- Tecnología e innovación de la propuesta: 0-30 puntos (umbral 15)\n- Plan de explotación del proyecto: 0-15 puntos\n- Impacto socioeconómico y ambiental: 0-15 puntos\n\nPara ser elegible, la solicitud debe obtener 50 puntos o más."},
+        {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI (https://sede.cdti.gob.es/).\n\nDocumentación: formulario de solicitud, memoria técnica, declaraciones responsables, contrato UPO / oferta previa con anexo técnico y presupuesto.\n\nLa participación de personal investigador de la UPO requiere que la UPO sea entidad subcontratada y se canaliza siempre a través de la OTRI."},
+        {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 17 de junio al 16 de julio de 2026, a las 12:00 h (hora peninsular). Resolución prevista: noviembre de 2026.\n\nContacta con la OTRI lo antes posible si tienes intención de participar."},
+        {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nEureka: eureka@cdti.es\nBilaterales / unilaterales: accion-exterior@cdti.es\nBig Science: dptoGIPD@cdti.es"}
+      ],
+      "documentos": [
+        {"id": "d1", "nombre": "Resumen visual Innoglobal 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/CDTI_INNOGLOBAL_2026_RESUMEN.pptx", "nota": ""},
+        {"id": "d2", "nombre": "Ficha OTRI UPO Innoglobal 2026", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_INNOGLOBAL_2026.docx", "nota": ""}
+      ]
+    },
+    {
+      "id": "cdti-cervera-2026",
+      "nombre": "Cervera Centros",
+      "organismo": "CDTI",
+      "tipo": "Centros tecnológicos",
+      "edicion": "2026",
+      "resumen": "Programas estratégicos de I+D+i en cooperación entre Centros Tecnológicos en tecnologías prioritarias Cervera.",
+      "apertura": "2026-06-11",
+      "cierre": "2026-07-10",
+      "resolucion": "",
+      "resolucionTxt": "Inicio de programas en 2027",
+      "fechasProvisionales": false,
+      "estadoManual": "",
+      "presupuesto": 20,
+      "participacionUPO": "Subcontratación",
+      "subvencion": "Hasta 100 %; mínimo 60 % del presupuesto elegible de cada entidad",
+      "tags": ["Defensa", "Economía circular", "Transporte inteligente", "Centros tecnológicos"],
+      "enlace": "https://www.cdti.es/ayudas/ayudas-cervera-para-centros-tecnologicos",
+      "contacto": "otri@upo.es · Cervera_CCTT@cdti.es",
+      "imagen": "img/Ficha_CDTI_CERVERA_2026_RESUMEN.png",
+      "datosClave": [
+        {"k": "Presupuesto", "v": "20 M€ (ampliable hasta 70 M€)"},
+        {"k": "Agrupación", "v": "4-7 Centros Tecnológicos; 10-35 % del presupuesto por entidad (coordinador hasta 50 %)"},
+        {"k": "Presupuesto por programa", "v": "2-5 M€"},
+        {"k": "Duración", "v": "3 o 4 años, con inicio en 2027"},
+        {"k": "Subcontratación", "v": "Hasta 25 % del presupuesto elegible de cada integrante"},
+        {"k": "Memoria técnica", "v": "Máximo 80 páginas"}
+      ],
+      "secciones": [
+        {"titulo": "Objeto", "texto": "Financiación de programas estratégicos de I+D+i realizados en cooperación por varios Centros Tecnológicos, en alguna de las tecnologías prioritarias «Cervera», para fortalecer sus capacidades científico-técnicas y su colaboración con empresas.\n\nLa convocatoria incorpora áreas vinculadas a seguridad y defensa. La ayuda supone la acreditación como «Centro de Excelencia Cervera» en la tecnología correspondiente, con vigencia de tres años tras la ejecución del programa."},
+        {"titulo": "Tecnologías prioritarias", "texto": "Seguridad y defensa:\n- Gemelos digitales avanzados para el refuerzo de capacidades de defensa\n- Sensores cuánticos aplicados a defensa\n- Tecnologías habilitadoras para vehículos en vuelo hipersónico\n- Tecnologías para sistemas electromagnéticos cinéticos\n- Metamateriales y nanomateriales avanzados para defensa y seguridad\n\nCiviles:\n- Economía circular\n- Transporte inteligente"},
+        {"titulo": "Beneficiarios y participación de la UPO", "texto": "Agrupaciones de 4 a 7 Centros Tecnológicos y/o Centros de Apoyo a la Innovación Tecnológica de ámbito estatal, inscritos en el registro del Real Decreto 2093/2008. Participación por entidad: 10 %-35 % del presupuesto (coordinador, hasta el 50 %).\n\nUPO: puede participar como entidad subcontratada por un centro de la agrupación: investigación contractual, conocimientos técnicos, consultoría y servicios equivalentes."},
+        {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: programas estratégicos de I+D+i en cooperación (agrupaciones de 4 a 7 Centros Tecnológicos)\n- Modalidad de participación de la UPO: subcontratación\n- Ámbito: nacional\n- Duración: plurianual, 3 o 4 años, con inicio en 2027\n- Presupuesto elegible por programa: entre 2.000.000 € y 5.000.000 €, con distribución equilibrada entre anualidades\n- Presupuesto de la convocatoria 2026: 20.000.000 € (ampliable hasta 70.000.000 €)\n- Intensidad de ayuda: subvención de hasta el 100 % del presupuesto elegible; la subvención por entidad no será inferior al 60 % de su presupuesto elegible\n- Compatibilidad: incompatible con otras ayudas públicas con idénticos objetivos y finalidad durante la ejecución\n- Subcontratación: hasta el 25 % del presupuesto elegible de cada integrante"},
+        {"titulo": "Criterios de evaluación", "texto": "Se evalúan de forma secuencial: si no se alcanza el umbral de un criterio no se continúa con la evaluación.\n- Alineación y contribución del plan estratégico a las tecnologías prioritarias Cervera: 0-10 puntos (umbral 7)\n- Objetivos estratégicos de I+D y viabilidad del programa: 0-30 puntos (umbral 21)\n- Formación e incorporación de recursos humanos: 0-20 puntos (umbral 14)\n- Internacionalización: 0-20 puntos (umbral 14)\n- Explotación y difusión de resultados: 0-20 puntos (umbral 14)\n\nPara ser elegible, la solicitud debe obtener 70 puntos o más."},
+        {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI.\n\nDocumentación: formulario de solicitud de ayuda, programa estratégico (memoria técnica), acuerdo de agrupación, declaraciones responsables, ofertas previas de subcontratación / contrato UPO con anexo técnico y presupuesto.\n\nLa participación de personal investigador de la UPO requiere que la UPO sea entidad subcontratada y se canaliza siempre a través de la OTRI."},
+        {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 11 de junio al 10 de julio de 2026, a las 12:00 h (hora peninsular). Los programas comienzan en 2027.\n\nContacta con la OTRI lo antes posible si tienes intención de participar."},
+        {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nCervera: Cervera_CCTT@cdti.es"}
+      ],
+      "documentos": [
+        {"id": "d1", "nombre": "Resumen visual Cervera Centros 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/Ficha_CDTI_CERVERA_2026_RESUMEN.pptx", "nota": ""},
+        {"id": "d2", "nombre": "Ficha OTRI UPO Cervera 2026", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_Cervera_2026_1.docx", "nota": ""}
+      ]
+    },
+    {
+      "id": "cdti-ecosistemas-2025",
+      "nombre": "Ecosistemas de Innovación y Transferencia",
+      "organismo": "CDTI",
+      "tipo": "Ecosistemas y transferencia",
+      "edicion": "2025",
+      "resumen": "Supra-ecosistemas interregionales de transferencia de conocimiento (CDTI-FEDER) con la UPO como socia de la agrupación.",
+      "apertura": "2025-12-17",
+      "cierre": "2026-03-11",
+      "resolucion": "2026-07",
+      "resolucionTxt": "",
+      "fechasProvisionales": false,
+      "estadoManual": "",
+      "presupuesto": 14.28,
+      "participacionUPO": "Socia de la agrupación",
+      "subvencion": "Hasta 85 % (Andalucía, CLM, Extremadura); 60 % regiones en transición; 40 % Aragón, Cataluña, Navarra y País Vasco",
+      "tags": ["FEDER", "Retos sociotécnicos", "Supra-ecosistemas", "Sello de Calidad"],
+      "enlace": "https://www.cdti.es/ayudas/ecosistemas-de-innovacion-y-transferencia-2025",
+      "contacto": "otri@upo.es · info@cdti.es",
+      "imagen": "img/CDTI_ECOSISTEMAS_2025_RESUMEN.png",
+      "datosClave": [
+        {"k": "Presupuesto", "v": "14.282.014 € (CDTI y FEDER 2021-2027); Andalucía 6.250.000 €"},
+        {"k": "Agrupación", "v": "4-8 entidades, actividad en al menos 3 CCAA; mínimo un centro de I+D y una empresa"},
+        {"k": "Presupuesto por actuación", "v": "120.000 € - 1.000.000 €; mínimo 30.000 € por entidad (10-70 % del total)"},
+        {"k": "Duración", "v": "Inicio en 2026; fin el 31/12/2027 o el 30/06/2028"},
+        {"k": "Pago", "v": "Anticipo de hasta el 60 % de la subvención, sin garantías"},
+        {"k": "Memoria técnica", "v": "Máximo 60 páginas"}
+      ],
+      "secciones": [
+        {"titulo": "Objeto", "texto": "Financiación de actuaciones de apoyo al desarrollo de ecosistemas y entornos innovadores interregionales (supra-ecosistemas), orientados a la transferencia, difusión y valorización del conocimiento y a la resolución de retos sociotécnicos compartidos por varias Comunidades Autónomas, con la colaboración de administraciones, centros generadores de conocimiento, empresas (especialmente pymes) y sociedad civil.\n\nEnmarcada en el Plan Complementario de Transferencia de Conocimiento y cofinanciada con fondos FEDER 2021-2027. Las propuestas con 65 puntos o más reciben el Sello de Calidad «Supra ecosistema de Innovación», que puede facilitar el acceso a financiación autonómica."},
+        {"titulo": "Retos sociotécnicos", "texto": "Cada propuesta debe encuadrarse en un reto principal (obligatorio) y puede añadir otros como secundarios. Si no encaja claramente en ninguno, se desestima.\n- Reto I: Transición ecológica justa y equitativa: sistema agroalimentario integrado de sostenibilidad ambiental, cohesión social y promoción de la salud\n- Reto II: Transición energética hacia un sistema eléctrico robusto, eficiente y sostenible\n- Reto III: Preservar para transformar: el patrimonio vital como vector de desarrollo territorial equilibrado y sostenible\n- Reto IV: Determinantes en salud y cuidado: los nuevos espacios socioeconómicos\n- Reto V: Transformación sistémica hacia una movilidad sostenible, conectada, eficiente y segura\n\nEjes de actuación y objetivos de cada reto: Anexo I de la convocatoria."},
+        {"titulo": "Beneficiarios y participación de la UPO", "texto": "Agrupaciones de 4 a 8 entidades, sin personalidad jurídica (una actúa como coordinador). Participación por entidad: 10 %-70 % del presupuesto elegible, con mínimo de 30.000 € por entidad.\n\nComposición mínima: al menos una entidad de investigación o transferencia (OPIs, universidades, institutos de investigación, centros tecnológicos y de apoyo a la innovación, OTRI inscritas en el registro del RD 984/2022...) y al menos una empresa o una asociación/fundación representativa de un sector empresarial. Las empresas, en conjunto, hasta el 30 % del presupuesto elegible de la agrupación.\n\nUPO: puede participar como miembro de la agrupación (socio beneficiario) en su condición de universidad, con actividades y personal en Andalucía.\n\nImportante: la participación de la UPO requiere su integración como miembro de la agrupación, con acuerdo de agrupación suscrito por todos los integrantes, y se canaliza siempre a través de la OTRI."},
+        {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: actuaciones de apoyo a ecosistemas interregionales en cooperación (4 a 8 entidades)\n- Modalidad de participación de la UPO: miembro de la agrupación (socio beneficiario)\n- Ámbito: actividades en al menos 3 de las 16 CCAA con fondos asignados. Cada entidad designa una sola CCAA de desarrollo\n- Duración: plurianual; inicio en 2026 y fin el 31/12/2027 o el 30/06/2028\n- Presupuesto elegible por actuación: entre 120.000 € y 1.000.000 €\n- Presupuesto de la convocatoria: 14.282.014 € (CDTI y FEDER 2021-2027), con límite por CCAA; Andalucía: 6.250.000 €\n- Intensidad de ayuda: subvención. Hasta el 85 % (Andalucía, Castilla-La Mancha, Extremadura), hasta el 60 % (regiones en transición; 85 % en Canarias) y hasta el 40 % (Aragón, Cataluña, Navarra y País Vasco). No inferior al 40 % del presupuesto de la agrupación ni al 25 % del de cada integrante\n- Pago: anticipo de hasta el 60 % de la subvención, sin garantías; el CDTI paga a cada entidad de forma individual\n- Compatibilidad: ayuda de minimis (máx. 300.000 € por empresa en 3 años); no acumulable con otras ayudas cofinanciadas con fondos estructurales para la misma actividad. Los organismos de investigación, en transferencia de conocimiento, quedan fuera de minimis, con máximo de 400.000 € por actuación y entidad\n- Subcontratación: hasta el 50 % del presupuesto elegible de cada integrante; no se puede subcontratar entre miembros de la agrupación"},
+        {"titulo": "Criterios de evaluación", "texto": "Criterios generales (art. 20.1.j de la Orden CNU/161/2025):\n- Constitución y capacidades del ecosistema: 0-30 puntos (umbral 10)\n- Calidad de la propuesta y plan de actuación: 0-30 puntos\n- Impactos científico-tecnológico, socioeconómico e industrial previstos: 0-40 puntos\n\nSi no se supera el umbral del primer criterio, no se continúa la evaluación. Nota final mínima para ser elegible: 50 puntos (65 o más: Sello de Calidad)."},
+        {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI (https://sede.cdti.gob.es/).\n\nDocumentación: formulario de solicitud, memoria técnica (Anexo II), acuerdo de agrupación (firmado, o con compromiso de aportarlo en la propuesta de resolución), declaraciones responsables (Anexo IV), ofertas previas de subcontrataciones a partir de 15.000 € si ya están determinadas y, opcionalmente, cartas de apoyo."},
+        {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 17 de diciembre de 2025 al 11 de marzo de 2026, a las 12:00 h (hora peninsular). El plazo inicial (hasta el 12/02/2026) se suspendió en febrero de 2026 y se amplió por Resolución de 18 de febrero de 2026."},
+        {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nCDTI: info@cdti.es"}
+      ],
+      "documentos": [
+        {"id": "d1", "nombre": "Resumen visual Ecosistemas 2025", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/CDTI_ECOSISTEMAS_2025_RESUMEN.pptx", "nota": ""},
+        {"id": "d2", "nombre": "Ficha OTRI UPO Ecosistemas 2025", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_Ecosistemas_2025.docx", "nota": ""}
+      ]
+    },
+    {
+      "id": "cdti-innterconecta-step-2026",
+      "nombre": "Innterconecta STEP",
+      "organismo": "CDTI",
+      "tipo": "I+D colaborativa",
+      "edicion": "2026",
+      "resumen": "I+D en cooperación empresarial en tecnologías digitales, limpias y biotecnología, con reserva para salud femenina.",
+      "apertura": "2026-10",
+      "cierre": "2026-11",
+      "resolucion": "2027-06",
+      "resolucionTxt": "1.º semestre 2027",
+      "fechasProvisionales": true,
+      "estadoManual": "",
+      "presupuesto": 138,
+      "participacionUPO": "Subcontratación",
+      "subvencion": "Hasta 80 % pequeña, 75 % mediana y 65 % gran empresa",
+      "tags": ["Digital", "IA", "Ciberseguridad", "Tecnologías limpias", "Biotecnología", "Salud femenina"],
+      "enlace": "https://www.cdti.es/ayudas/innterconecta-step",
+      "contacto": "otri@upo.es",
+      "imagen": "img/INNTERCONECTA_STEP_2026_RESUMEN.png",
+      "datosClave": [
+        {"k": "Presupuesto", "v": "138 M€; Andalucía 18 M€ (13 %)"},
+        {"k": "Consorcio", "v": "2-6 empresas, de al menos 2 CCAA"},
+        {"k": "Presupuesto por proyecto", "v": "1-4 M€; mínimo 175.000 € por empresa"},
+        {"k": "Subcontratación a universidades", "v": "Mínimo 10 % del presupuesto"},
+        {"k": "Novedades 2026", "v": "10 M€ para salud femenina; Illes Balears elegible; alineación europea"}
+      ],
+      "secciones": [
+        {"titulo": "Ámbitos tecnológicos", "texto": "- Tecnologías digitales: IA, ciberseguridad\n- Tecnologías limpias y eficientes: transición energética, economía circular\n- Biotecnología: medicamentos, salud"},
+        {"titulo": "Requisitos", "texto": "- 2-6 empresas, de al menos 2 CCAA\n- Presupuesto de 1 a 4 M€\n- Mínimo 175.000 € por empresa\n- Mínimo 10 % de subcontratación a universidades\n\nUPO: participa como entidad subcontratada."},
+        {"titulo": "Novedades 2026", "texto": "- 10 M€ reservados a salud femenina\n- Illes Balears elegible\n- Alineación europea"},
+        {"titulo": "Calendario", "texto": "Apertura: octubre de 2026\nCierre: noviembre de 2026\nResolución: primer semestre de 2027\n\nFechas provisionales hasta que se publique la convocatoria."},
+        {"titulo": "Subvención", "texto": "- Pequeña empresa: hasta el 80 %\n- Mediana empresa: hasta el 75 %\n- Gran empresa: hasta el 65 %"},
+        {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es"}
+      ],
+      "documentos": [
+        {"id": "d1", "nombre": "Resumen visual Innterconecta STEP 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/INNTERCONECTA_STEP_2026_RESUMEN.pptx", "nota": ""}
+      ]
+    }
+  ]
+}

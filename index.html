@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mapa de convocatorias</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cabecera sobria, barra de filtros, tres vistas (mapa temporal, tarjetas, tabla) y ficha en panel lateral. */
+:root{
+  --bg:#F2F5F9; --surface:#FFFFFF; --surface2:#F7F9FC; --ink:#14233A; --muted:#566781; --line:#D8DFEA;
+  --accent:#0B3A6B; --accent-ink:#FFFFFF; --gold:#E8A800; --gold-bg:#FFF4CC; --focus:#1F66B5;
+  --ok:#14764B; --soon:#8F5A00; --eval:#4457A6; --done:#566781; --danger:#B3261E;
+  --o0:#D9531E; --o1:#1F66B5; --o2:#6A4FB3; --o3:#1E8E6A; --o4:#B03A6A; --o5:#8A6A12; --o6:#2A8FA3; --o7:#666F7F;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --lab:232px; --mw:72px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1524; --surface:#152238; --surface2:#1A2A44; --ink:#E7EDF6; --muted:#9AA9C0; --line:#2A3B58;
+    --accent:#7DB2F0; --accent-ink:#0A1627; --gold:#F2C14E; --gold-bg:#3A2F10; --focus:#8DBBF5;
+    --ok:#4CC38A; --soon:#F2C14E; --eval:#9DB0FF; --done:#9AA9C0; --danger:#FF8A80;
+    --o0:#FF8A55; --o1:#6FB0FF; --o2:#A99BFF; --o3:#4CC9A0; --o4:#F07AA8; --o5:#E0B84A; --o6:#5CC8DC; --o7:#A4AEBF;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1524; --surface:#152238; --surface2:#1A2A44; --ink:#E7EDF6; --muted:#9AA9C0; --line:#2A3B58;
+  --accent:#7DB2F0; --accent-ink:#0A1627; --gold:#F2C14E; --gold-bg:#3A2F10; --focus:#8DBBF5;
+  --ok:#4CC38A; --soon:#F2C14E; --eval:#9DB0FF; --done:#9AA9C0; --danger:#FF8A80;
+  --o0:#FF8A55; --o1:#6FB0FF; --o2:#A99BFF; --o3:#4CC9A0; --o4:#F07AA8; --o5:#E0B84A; --o6:#5CC8DC; --o7:#A4AEBF;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+img{max-width:100%}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1240px;margin:0 auto}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* Cabecera */
+.top{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;padding:28px 0 18px}
+.kicker{font:500 12px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+h1{font:700 clamp(26px,4.2vw,40px)/1.05 var(--font-display);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.sub{margin:8px 0 0;color:var(--muted);max-width:62ch}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:8px;font-weight:500;line-height:1.2;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#241A00}
+.btn.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}
+.btn.small{padding:5px 10px;font-size:13px}
+.btn svg{width:16px;height:16px;flex:none}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* Barra de edición y avisos */
+.editbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--gold-bg);border:1px solid var(--gold);border-radius:10px;padding:10px 14px;margin-bottom:16px}
+.editbar p{margin:0;font-size:14px;max-width:60ch}
+.editbar .acts{display:flex;gap:8px;flex-wrap:wrap}
+.notice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin-bottom:16px}
+
+/* Filtros */
+.filters{display:grid;gap:12px;margin-bottom:18px}
+.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.search{position:relative;flex:1 1 280px;min-width:0}
+.search svg{position:absolute;left:11px;top:50%;translate:0 -50%;width:16px;height:16px;color:var(--muted)}
+.search input[type=text]{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+select,input[type=text],input[type=number],input[type=url],textarea{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-width:0}
+textarea{width:100%;resize:vertical}
+.lbl{font:500 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip .dot{width:9px;height:9px;border-radius:50%;background:var(--org,var(--muted))}
+.chip .n{font-family:var(--font-mono);font-size:12px;opacity:.75}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tab{border:0;background:none;padding:10px 14px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.count{margin-left:auto;align-self:center;color:var(--muted);font-size:13px}
+
+/* Estado */
+.pill{display:inline-flex;align-items:center;gap:6px;font:500 12px/1 var(--font-mono);padding:5px 9px;border-radius:999px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.st-abierta{--c:var(--ok)}.st-proxima{--c:var(--soon)}.st-evaluacion{--c:var(--eval)}.st-resuelta,.st-cerrada,.st-sinfechas{--c:var(--done)}
+
+/* Mapa temporal */
+.tl{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.tl-scroll{overflow-x:auto}
+.tl-in{position:relative;width:calc(var(--lab) + var(--w))}
+.tl-row{display:grid;grid-template-columns:var(--lab) var(--w);border-top:1px solid var(--line)}
+.tl-row:first-child{border-top:0}
+.tl-lab{position:sticky;left:0;z-index:3;background:var(--surface);border-right:1px solid var(--line);padding:8px 12px;min-width:0}
+.tl-lab button{all:unset;cursor:pointer;display:block;width:100%}
+.tl-lab button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.tl-name{font-weight:600;font-size:14px;line-height:1.25;overflow-wrap:anywhere}
+.tl-meta{display:flex;gap:8px;align-items:center;margin-top:4px;font-size:12px;color:var(--muted)}
+.tl-track{position:relative;height:64px;background-image:repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px var(--mw))}
+.tl-yrs,.tl-mons{display:flex}
+.tl-yrs div,.tl-mons div{flex:none;font:500 11px/1 var(--font-mono);color:var(--muted);padding:8px 6px;border-left:1px solid var(--line);text-transform:uppercase;letter-spacing:.06em}
+.tl-yrs div{color:var(--ink);font-size:12px;border-left:2px solid var(--line)}
+.tl-head .tl-lab{display:flex;align-items:flex-end;color:var(--muted);font:500 11px/1 var(--font-mono);text-transform:uppercase;letter-spacing:.08em}
+.tl-grp .tl-lab,.tl-grp .tl-track{background:color-mix(in srgb,var(--org) 9%,var(--surface));height:34px;padding-block:0}
+.tl-grp .tl-lab{display:flex;align-items:center;gap:8px;font:700 13px/1 var(--font-display);letter-spacing:.02em;color:var(--org)}
+.tl-grp .tl-lab span{font:400 12px var(--font-mono);color:var(--muted)}
+.tl-grp .tl-track{background-image:none}
+.bar{all:unset;cursor:pointer;position:absolute;top:13px;height:16px;border-radius:4px;background:var(--org);min-width:6px}
+.bar.prov{background:repeating-linear-gradient(135deg,var(--org) 0 6px,color-mix(in srgb,var(--org) 40%,var(--surface)) 6px 12px)}
+.bar:hover,.bar:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.evalline{position:absolute;top:20px;height:2px;background:var(--org);opacity:.45}
+.diamond{position:absolute;top:14px;width:13px;height:13px;rotate:45deg;background:var(--surface);border:2.5px solid var(--org);margin-left:-6px}
+.tl-d{position:absolute;top:38px;font:400 11px/1.2 var(--font-mono);color:var(--muted);white-space:nowrap}
+.tl-r{position:absolute;top:13px;font:400 11px/16px var(--font-mono);color:var(--muted);white-space:nowrap}
+.today{position:absolute;top:0;bottom:0;width:2px;background:var(--gold);z-index:2;pointer-events:none}
+.today b{position:absolute;top:0;left:4px;font:500 10px/1 var(--font-mono);background:var(--gold);color:#241A00;padding:3px 5px;border-radius:3px;white-space:nowrap}
+.legend{display:flex;gap:18px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);background:var(--surface2)}
+.legend i{display:inline-block;vertical-align:middle;margin-right:6px}
+.lg-bar{width:22px;height:10px;border-radius:3px;background:var(--o7)}
+.lg-prov{width:22px;height:10px;border-radius:3px;background:repeating-linear-gradient(135deg,var(--o7) 0 4px,color-mix(in srgb,var(--o7) 40%,var(--surface)) 4px 8px)}
+.lg-ev{width:22px;height:2px;background:var(--o7);opacity:.6}
+.lg-di{width:9px;height:9px;rotate:45deg;border:2px solid var(--o7);background:var(--surface)}
+.lg-td{width:3px;height:12px;background:var(--gold)}
+.nodates{margin-top:14px;font-size:13px;color:var(--muted)}
+
+/* Tarjetas */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr));gap:16px}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card:hover{border-color:var(--org,var(--muted))}
+.card-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.org{font:700 12px/1 var(--font-display);letter-spacing:.06em;text-transform:uppercase;color:var(--org)}
+.card h3{margin:0;font:700 19px/1.2 var(--font-display);letter-spacing:-.01em;text-wrap:balance}
+.card h3 button{all:unset;cursor:pointer}
+.card h3 button::after{content:"";position:absolute;inset:0;border-radius:12px}
+.card h3 button:focus-visible::after{outline:2px solid var(--focus);outline-offset:2px}
+.card p{margin:0;color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:13px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.card-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.card .edit{position:relative;z-index:2}
+.match{font-size:12px;color:var(--accent);margin:0}
+.upo{display:inline-block;font-size:12px;font-weight:600;border-radius:6px;padding:3px 8px;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
+
+/* Tabla */
+.tbl{border:1px solid var(--line);border-radius:12px;overflow-x:auto;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:14px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 11px/1.2 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--surface2);white-space:nowrap}
+th button{all:unset;cursor:pointer}
+th button:focus-visible{outline:2px solid var(--focus)}
+tr:last-child td{border-bottom:0}
+td .nm{all:unset;cursor:pointer;font-weight:600;color:var(--accent)}
+td .nm:hover{text-decoration:underline}
+.num{text-align:right;font-family:var(--font-mono)}
+
+.empty{border:1px dashed var(--line);border-radius:12px;padding:32px 20px;text-align:center;color:var(--muted);background:var(--surface)}
+.empty p{margin:0 0 12px}
+
+/* Panel de ficha */
+.scrim{position:fixed;inset:0;background:rgba(8,14,26,.55);z-index:50}
+.drawer{position:fixed;top:0;bottom:0;right:0;width:min(760px,100%);background:var(--bg);z-index:60;display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.25);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.d-head{padding:18px max(16px,env(safe-area-inset-left,0px)) 0 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.d-line{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.d-head h2{margin:8px 0 4px;font:700 clamp(22px,3.4vw,28px)/1.12 var(--font-display);letter-spacing:-.015em;text-wrap:balance}
+.d-sum{margin:0 0 12px;color:var(--muted)}
+.d-acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.d-head .tabs{margin:0;border-bottom:0}
+.d-body{flex:1;overflow-y:auto;padding:20px max(16px,env(safe-area-inset-left,0px)) 40px 20px;display:grid;gap:18px;align-content:start}
+.x{all:unset;cursor:pointer;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;border:1px solid var(--line);flex:none}
+.x:focus-visible{outline:2px solid var(--focus)}
+.x svg{width:16px;height:16px}
+.shot{display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.shot img{display:block;width:100%;height:auto}
+.cal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cal div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.cal small{display:block;font:500 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cal b{font:500 15px/1.2 var(--font-mono)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px;margin:0}
+.kv div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kv dt{font:500 11px/1.2 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.kv dd{margin:0;overflow-wrap:anywhere}
+.callout{background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));border-radius:10px;padding:12px 14px}
+.callout b{display:block;font:500 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.tagrow{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--surface);color:var(--muted)}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.sec h3{margin:0 0 8px;font:700 16px/1.2 var(--font-display)}
+.rich{display:grid;gap:6px;overflow-wrap:anywhere}
+.rich p{margin:0}
+.rich ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.docs{display:grid;gap:10px}
+.doc{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.ext{font:500 11px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase;border-radius:6px;padding:8px 6px;min-width:46px;text-align:center;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.doc b{display:block;overflow-wrap:anywhere}
+.doc small{color:var(--muted);display:block}
+.doc .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.local{font-size:12px;color:var(--soon)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+
+/* Formularios y diálogos */
+.modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:16px;background:rgba(8,14,26,.6)}
+.box{width:min(860px,100%);max-height:calc(100% - 8px);overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:16px}
+.box.narrow{width:min(520px,100%)}
+.box h2{margin:0;font:700 22px/1.15 var(--font-display)}
+.form{display:grid;gap:16px}
+.fs{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0;display:grid;gap:12px;background:var(--surface);min-width:0}
+.fs legend{font:500 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0 6px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fld{display:grid;gap:4px;min-width:0}
+.fld label{font-size:13px;font-weight:600}
+.fld input,.fld select,.fld textarea{width:100%}
+.hint{font-size:12px;color:var(--muted);margin:0}
+.err{color:var(--danger);font-size:13px;margin:0}
+.rowx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:8px;align-items:start}
+.rowx.sec2{grid-template-columns:minmax(0,1fr) auto}
+.rowx .stack{display:grid;gap:6px;min-width:0}
+.mini{display:flex;gap:4px}
+.bar-acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;left:50%;translate:-50% 0;bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:100;font-size:14px;max-width:calc(100% - 32px)}
+pre.out{margin:0;max-height:260px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;font:12px/1.4 var(--font-mono)}
+ol.how{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14px}
+
+@media (max-width:720px){
+  :root{--lab:150px;--mw:64px}
+  .cols,.cols3{grid-template-columns:1fr}
+  .cal{grid-template-columns:1fr}
+  .rowx{grid-template-columns:1fr}
+  .doc{grid-template-columns:auto 1fr}
+  .doc .acts{grid-column:1/-1;justify-content:flex-start}
+  .drawer{width:100%}
+  .count{width:100%;margin-left:0}
+}
+@media (prefers-reduced-motion:no-preference){
+  .drawer{animation:slide .18s ease-out}
+  @keyframes slide{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+}
+</style>
+
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="kicker">Colaboración universidad-empresa</p>
+      <h1>Mapa de convocatorias</h1>
+      <p class="sub">Convocatorias de CDTI, AEI y otros organismos con sus fichas resumen. Pulsa una convocatoria para ver sus datos clave y descargar los documentos.</p>
+    </div>
+    <button class="btn primary" id="btn-edit" data-act="toggle-edit" aria-pressed="false"></button>
+  </header>
+
+  <div id="editbar" class="editbar" hidden></div>
+  <div id="notice" class="notice" hidden></div>
+
+  <section class="filters" aria-label="Filtros">
+    <div class="frow">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="text" placeholder="Buscar en nombres, fichas y documentos" aria-label="Buscar" autocomplete="off">
+      </div>
+      <select id="f-tipo" aria-label="Tipo de convocatoria"></select>
+      <select id="f-upo" aria-label="Participación de la UPO"></select>
+    </div>
+    <div class="frow" id="chips-org"></div>
+    <div class="frow" id="chips-est"></div>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="Vista">
+    <button class="tab" role="tab" data-act="view" data-v="mapa" id="t-mapa">Mapa temporal</button>
+    <button class="tab" role="tab" data-act="view" data-v="tarjetas" id="t-tarjetas">Tarjetas</button>
+    <button class="tab" role="tab" data-act="view" data-v="tabla" id="t-tabla">Tabla comparativa</button>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+
+  <main id="view"></main>
+</div>
+
+<div class="scrim" id="scrim" hidden data-act="close"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden></aside>
+<div class="modal" id="modal" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script id="seed" type="application/json">{"version": 1, "titulo": "Mapa de convocatorias de colaboración universidad-empresa", "convocatorias": [{"id": "cdti-misiones-2026", "nombre": "Misiones Ciencia e Innovación", "organismo": "CDTI", "tipo": "I+D colaborativa", "edicion": "2026", "resumen": "Proyectos de I+D en cooperación liderados por empresas, encuadrados en 7 misiones estratégicas.", "apertura": "2026-05-12", "cierre": "2026-06-12", "resolucion": "2026-11", "resolucionTxt": "", "fechasProvisionales": false, "estadoManual": "", "presupuesto": 60, "participacionUPO": "Subcontratación", "subvencion": "Hasta 80 / 75 / 65 % según tamaño de empresa (resumen); máx. 70 % (ficha)", "tags": ["Energía", "Aeronáutica", "Antimicrobianos", "Defensa", "Salud de la mujer", "Alimentación", "Vivienda"], "enlace": "https://www.cdti.es/ayudas/misiones-ciencia-e-innovacion-2026", "contacto": "otri@upo.es · misiones@cdti.es", "imagen": "img/CDTI_MISIONES_2026_RESUMEN.png", "datosClave": [{"k": "Presupuesto", "v": "60 M€ (ampliable hasta 150 M€); +80 M€ de ampliación para Seguridad y Defensa según el resumen"}, {"k": "Consorcio", "v": "3-6 empresas, al menos una pyme; ninguna supera el 70 % del presupuesto"}, {"k": "Presupuesto por proyecto", "v": "3,5-10 M€; mínimo 175.000 € por empresa"}, {"k": "Subcontratación a universidades y OPIs", "v": "Mínimo 15 % del presupuesto elegible"}, {"k": "Duración", "v": "1 ene 2027 - 31 dic 2029 o 31 dic 2030"}, {"k": "Memoria técnica", "v": "Máximo 80 páginas"}], "secciones": [{"titulo": "Objeto", "texto": "Financiación de proyectos de I+D en cooperación liderados por empresas, que propongan soluciones a desafíos transversales y estratégicos de la sociedad española, mejoren la base tecnológica de las empresas y estimulen la colaboración público-privada. Los proyectos deben encuadrarse en alguna de las 7 misiones del Anexo I:\n- Energía: sistema energético estable, flexible y resiliente con redes sólidas y fiables. Gestión inteligente de red, almacenamiento a gran escala e integración de renovables.\n- Aeronáutica: sector más eficiente, sostenible y resiliente. Materiales y procesos para reducción de peso, propulsión ultra-eficiente compatible con SAF y avión más eléctrico (MEA).\n- Resistencia antimicrobiana: nuevas capacidades contra microorganismos multirresistentes (enfoque One Health). Nuevos antimicrobianos, diagnóstico rápido, vigilancia epidemiológica digital, vacunas y tecnologías de escalado.\n- Defensa y seguridad: autonomía estratégica con foco en tecnologías de doble uso: contramedidas NRBQ, sistemas autopropulsados, electrónica de defensa y ciberresiliencia.\n- Salud de la mujer: investigación biosanitaria orientada a patologías con mayor impacto en la mujer: cardiovasculares, oncológicas, autoinmunes, salud mental y enfermedades raras de predominio femenino.\n- Soberanía alimentaria: eficiencia productiva, calidad, sostenibilidad y seguridad alimentaria. Producción sostenible, trazabilidad, nuevos alimentos y cadenas de suministro resilientes.\n- Vivienda: edificación industrializada y digitalizada. Nuevos sistemas constructivos, materiales de bajo impacto y digitalización del proceso edificatorio."}, {"titulo": "Beneficiarios y participación de la UPO", "texto": "Agrupaciones de 3 a 6 empresas; al menos dos de ellas autónomas entre sí, con domicilio fiscal en España (o establecimiento/sucursal en territorio español). Al menos una pyme. Ninguna empresa autónoma puede superar el 70 % del presupuesto elegible.\n\nUPO: puede participar como entidad subcontratada. El consorcio debe subcontratar al menos el 15 % del presupuesto total elegible a organismos de investigación (universidades, OPIs, institutos sanitarios, centros tecnológicos...).\n\nImportante: Misiones CI financia proyectos de I+D liderados por empresas. La UPO no puede ser miembro de la agrupación empresarial, sólo entidad subcontratada por uno de sus miembros."}, {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: colaborativos, liderados por empresas\n- Modalidad de participación de la UPO: subcontratación\n- Ámbito: territorial nacional\n- Duración: del 1 de enero de 2027 al 31 de diciembre de 2029 o al 31 de diciembre de 2030\n- Presupuesto del proyecto: entre 3.500.000 € y 10.000.000 €; mínimo 175.000 € por empresa\n- Presupuesto de la convocatoria 2026: 60.000.000 € (ampliable hasta 150 M€). Aeronáutica: mínimo 20.000.000 €. Salud de la mujer: mínimo 5.000.000 €\n- Intensidad de ayuda: mínimo 40 % del presupuesto elegible por entidad; intensidad máxima 70 %. La investigación industrial debe ser al menos el 40 % del presupuesto elegible\n- Subcontratación: hasta el 50 % del presupuesto elegible por empresa (hasta el 70 % en proyectos de salud con ensayos preclínicos/clínicos)"}, {"titulo": "Criterios de evaluación", "texto": "- Excelencia del consorcio y calidad del proyecto (objetivos, metodología, TRL, nivel de innovación): 0-30 puntos (umbral 15)\n- Impacto (explotación comercial, impacto en la misión-reto, transferencia público-privada): 0-30 puntos (umbral 15)\n- Calidad del plan de trabajo y del equipo (estructura del consorcio, gestión, medios): 0-25 puntos (umbral 12)\n- Impacto socioeconómico, ambiental, perspectiva de género y sostenibilidad: 0-15 puntos\n\nPara ser elegible, la solicitud debe obtener 50 puntos o más."}, {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI (https://sede.cdti.gob.es/).\n\nDocumentación: formulario de solicitud de ayuda, programa estratégico (memoria técnica), acuerdo de agrupación, declaraciones responsables, ofertas previas de subcontratación / contrato UPO con anexo técnico y presupuesto.\n\nLa participación de personal investigador de la UPO requiere que la UPO sea entidad subcontratada y se canaliza siempre a través de la OTRI."}, {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 12 de mayo al 12 de junio de 2026, a las 12:00 h (hora peninsular). Resolución prevista: noviembre de 2026.\n\nContacta con la OTRI lo antes posible si tienes intención de participar, para preparar la documentación y la propuesta de subcontratación."}, {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nConsultas CDTI: misiones@cdti.es"}], "documentos": [{"id": "d1", "nombre": "Resumen visual Misiones 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/CDTI_MISIONES_2026_RESUMEN.pptx", "nota": ""}, {"id": "d2", "nombre": "Ficha OTRI UPO Misiones CI 2026", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_Misiones_CI_2026_2.docx", "nota": ""}]}, {"id": "cdti-innoglobal-2026", "nombre": "Innoglobal", "organismo": "CDTI", "tipo": "Cooperación internacional", "edicion": "2026", "resumen": "Proyectos de I+D de transferencia tecnológica internacional de empresas españolas.", "apertura": "2026-06-17", "cierre": "2026-07-16", "resolucion": "2026-11", "resolucionTxt": "", "fechasProvisionales": false, "estadoManual": "", "presupuesto": 30.25, "participacionUPO": "Subcontratación", "subvencion": "Mínimo 30 % del presupuesto elegible; el máximo depende de tamaño, tipo de I+D y región", "tags": ["Eureka", "Iberoeka", "PRIMA", "Big Science", "FEDER"], "enlace": "https://www.cdti.es/ayudas/innoglobal", "contacto": "otri@upo.es · eureka@cdti.es · accion-exterior@cdti.es · dptoGIPD@cdti.es", "imagen": "img/CDTI_INNOGLOBAL_2026_RESUMEN.png", "datosClave": [{"k": "Presupuesto", "v": "30,25 M€ (CDTI + FEDER); Andalucía 8 M€"}, {"k": "Presupuesto mínimo", "v": "175.000 € por empresa beneficiaria"}, {"k": "Subcontratación", "v": "Hasta 50 % (hasta 70 % en salud con ensayos preclínicos/clínicos)"}, {"k": "Ejecución", "v": "CCAA con fondos FEDER disponibles"}, {"k": "Duración", "v": "1 ene 2027 - 31 dic 2028 o 30 jun 2029"}, {"k": "Memoria técnica", "v": "Máximo 50 páginas"}], "secciones": [{"titulo": "Objeto", "texto": "Financiación de proyectos de I+D en cooperación tecnológica internacional para empresas españolas, con el objetivo de mejorar su competitividad mediante la innovación. Los proyectos deben enmarcarse en programas CDTI de cooperación internacional:\n- Programas multilaterales (Eureka, Iberoeka, PRIMA, etc.)\n- Programas bilaterales gestionados por el CDTI\n- Proyectos unilaterales con certificación CDTI\n- Proyectos Big Science (grandes instalaciones científicas internacionales)"}, {"titulo": "Beneficiarios y participación de la UPO", "texto": "Pymes y empresas pequeñas de mediana capitalización (hasta 499 empleados que no sean pymes). Grandes empresas: sólo cuando la dirección de desarrollo del proyecto se localice en Canarias.\n\nLas CCAA de ejecución deben contar con fondos FEDER: Andalucía, Castilla-La Mancha, Extremadura, Baleares, Canarias, Castilla y León, Comunidad Valenciana, Galicia, Murcia, Ceuta o Melilla.\n\nUPO: puede participar como entidad subcontratada por una empresa beneficiaria (investigación contractual, conocimientos técnicos, consultoría y servicios equivalentes). La entidad subcontratada no forma parte del consorcio internacional como socio participante.\n\nImportante: INNOGLOBAL financia la participación española en un proyecto de cooperación tecnológica internacional. La empresa debe participar en un proyecto enmarcado en uno de los programas reconocidos por CDTI."}, {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: individual (empresa) con dimensión internacional\n- Modalidad de participación de la UPO: subcontratación\n- Ámbito: nacional (CCAA con fondos FEDER disponibles)\n- Duración: del 1 de enero de 2027 al 31 de diciembre de 2028 o al 30 de junio de 2029\n- Presupuesto mínimo: 175.000 € por empresa beneficiaria\n- Presupuesto de la convocatoria 2026: 30.250.000 € (CDTI + FEDER). Andalucía: 8.000.000 €\n- Intensidad de ayuda: mínimo 30 % del presupuesto elegible. El máximo depende del tamaño de la empresa, el tipo de actividad de I+D y la región\n- Subcontratación: hasta el 50 % del presupuesto (hasta el 70 % en proyectos de salud con ensayos preclínicos/clínicos)"}, {"titulo": "Criterios de evaluación", "texto": "- Proyección internacional de la propuesta y del consorcio: 0-25 puntos (umbral 12)\n- Capacidad de la empresa española en relación con la propuesta: 0-15 puntos\n- Tecnología e innovación de la propuesta: 0-30 puntos (umbral 15)\n- Plan de explotación del proyecto: 0-15 puntos\n- Impacto socioeconómico y ambiental: 0-15 puntos\n\nPara ser elegible, la solicitud debe obtener 50 puntos o más."}, {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI (https://sede.cdti.gob.es/).\n\nDocumentación: formulario de solicitud, memoria técnica, declaraciones responsables, contrato UPO / oferta previa con anexo técnico y presupuesto.\n\nLa participación de personal investigador de la UPO requiere que la UPO sea entidad subcontratada y se canaliza siempre a través de la OTRI."}, {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 17 de junio al 16 de julio de 2026, a las 12:00 h (hora peninsular). Resolución prevista: noviembre de 2026.\n\nContacta con la OTRI lo antes posible si tienes intención de participar."}, {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nEureka: eureka@cdti.es\nBilaterales / unilaterales: accion-exterior@cdti.es\nBig Science: dptoGIPD@cdti.es"}], "documentos": [{"id": "d1", "nombre": "Resumen visual Innoglobal 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/CDTI_INNOGLOBAL_2026_RESUMEN.pptx", "nota": ""}, {"id": "d2", "nombre": "Ficha OTRI UPO Innoglobal 2026", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_INNOGLOBAL_2026.docx", "nota": ""}]}, {"id": "cdti-cervera-2026", "nombre": "Cervera Centros", "organismo": "CDTI", "tipo": "Centros tecnológicos", "edicion": "2026", "resumen": "Programas estratégicos de I+D+i en cooperación entre Centros Tecnológicos en tecnologías prioritarias Cervera.", "apertura": "2026-06-11", "cierre": "2026-07-10", "resolucion": "", "resolucionTxt": "Inicio de programas en 2027", "fechasProvisionales": false, "estadoManual": "", "presupuesto": 20, "participacionUPO": "Subcontratación", "subvencion": "Hasta 100 %; mínimo 60 % del presupuesto elegible de cada entidad", "tags": ["Defensa", "Economía circular", "Transporte inteligente", "Centros tecnológicos"], "enlace": "https://www.cdti.es/ayudas/ayudas-cervera-para-centros-tecnologicos", "contacto": "otri@upo.es · Cervera_CCTT@cdti.es", "imagen": "img/Ficha_CDTI_CERVERA_2026_RESUMEN.png", "datosClave": [{"k": "Presupuesto", "v": "20 M€ (ampliable hasta 70 M€)"}, {"k": "Agrupación", "v": "4-7 Centros Tecnológicos; 10-35 % del presupuesto por entidad (coordinador hasta 50 %)"}, {"k": "Presupuesto por programa", "v": "2-5 M€"}, {"k": "Duración", "v": "3 o 4 años, con inicio en 2027"}, {"k": "Subcontratación", "v": "Hasta 25 % del presupuesto elegible de cada integrante"}, {"k": "Memoria técnica", "v": "Máximo 80 páginas"}], "secciones": [{"titulo": "Objeto", "texto": "Financiación de programas estratégicos de I+D+i realizados en cooperación por varios Centros Tecnológicos, en alguna de las tecnologías prioritarias «Cervera», para fortalecer sus capacidades científico-técnicas y su colaboración con empresas.\n\nLa convocatoria incorpora áreas vinculadas a seguridad y defensa. La ayuda supone la acreditación como «Centro de Excelencia Cervera» en la tecnología correspondiente, con vigencia de tres años tras la ejecución del programa."}, {"titulo": "Tecnologías prioritarias", "texto": "Seguridad y defensa:\n- Gemelos digitales avanzados para el refuerzo de capacidades de defensa\n- Sensores cuánticos aplicados a defensa\n- Tecnologías habilitadoras para vehículos en vuelo hipersónico\n- Tecnologías para sistemas electromagnéticos cinéticos\n- Metamateriales y nanomateriales avanzados para defensa y seguridad\n\nCiviles:\n- Economía circular\n- Transporte inteligente"}, {"titulo": "Beneficiarios y participación de la UPO", "texto": "Agrupaciones de 4 a 7 Centros Tecnológicos y/o Centros de Apoyo a la Innovación Tecnológica de ámbito estatal, inscritos en el registro del Real Decreto 2093/2008. Participación por entidad: 10 %-35 % del presupuesto (coordinador, hasta el 50 %).\n\nUPO: puede participar como entidad subcontratada por un centro de la agrupación: investigación contractual, conocimientos técnicos, consultoría y servicios equivalentes."}, {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: programas estratégicos de I+D+i en cooperación (agrupaciones de 4 a 7 Centros Tecnológicos)\n- Modalidad de participación de la UPO: subcontratación\n- Ámbito: nacional\n- Duración: plurianual, 3 o 4 años, con inicio en 2027\n- Presupuesto elegible por programa: entre 2.000.000 € y 5.000.000 €, con distribución equilibrada entre anualidades\n- Presupuesto de la convocatoria 2026: 20.000.000 € (ampliable hasta 70.000.000 €)\n- Intensidad de ayuda: subvención de hasta el 100 % del presupuesto elegible; la subvención por entidad no será inferior al 60 % de su presupuesto elegible\n- Compatibilidad: incompatible con otras ayudas públicas con idénticos objetivos y finalidad durante la ejecución\n- Subcontratación: hasta el 25 % del presupuesto elegible de cada integrante"}, {"titulo": "Criterios de evaluación", "texto": "Se evalúan de forma secuencial: si no se alcanza el umbral de un criterio no se continúa con la evaluación.\n- Alineación y contribución del plan estratégico a las tecnologías prioritarias Cervera: 0-10 puntos (umbral 7)\n- Objetivos estratégicos de I+D y viabilidad del programa: 0-30 puntos (umbral 21)\n- Formación e incorporación de recursos humanos: 0-20 puntos (umbral 14)\n- Internacionalización: 0-20 puntos (umbral 14)\n- Explotación y difusión de resultados: 0-20 puntos (umbral 14)\n\nPara ser elegible, la solicitud debe obtener 70 puntos o más."}, {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI.\n\nDocumentación: formulario de solicitud de ayuda, programa estratégico (memoria técnica), acuerdo de agrupación, declaraciones responsables, ofertas previas de subcontratación / contrato UPO con anexo técnico y presupuesto.\n\nLa participación de personal investigador de la UPO requiere que la UPO sea entidad subcontratada y se canaliza siempre a través de la OTRI."}, {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 11 de junio al 10 de julio de 2026, a las 12:00 h (hora peninsular). Los programas comienzan en 2027.\n\nContacta con la OTRI lo antes posible si tienes intención de participar."}, {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nCervera: Cervera_CCTT@cdti.es"}], "documentos": [{"id": "d1", "nombre": "Resumen visual Cervera Centros 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/Ficha_CDTI_CERVERA_2026_RESUMEN.pptx", "nota": ""}, {"id": "d2", "nombre": "Ficha OTRI UPO Cervera 2026", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_Cervera_2026_1.docx", "nota": ""}]}, {"id": "cdti-ecosistemas-2025", "nombre": "Ecosistemas de Innovación y Transferencia", "organismo": "CDTI", "tipo": "Ecosistemas y transferencia", "edicion": "2025", "resumen": "Supra-ecosistemas interregionales de transferencia de conocimiento (CDTI-FEDER) con la UPO como socia de la agrupación.", "apertura": "2025-12-17", "cierre": "2026-03-11", "resolucion": "2026-07", "resolucionTxt": "", "fechasProvisionales": false, "estadoManual": "", "presupuesto": 14.28, "participacionUPO": "Socia de la agrupación", "subvencion": "Hasta 85 % (Andalucía, CLM, Extremadura); 60 % regiones en transición; 40 % Aragón, Cataluña, Navarra y País Vasco", "tags": ["FEDER", "Retos sociotécnicos", "Supra-ecosistemas", "Sello de Calidad"], "enlace": "https://www.cdti.es/ayudas/ecosistemas-de-innovacion-y-transferencia-2025", "contacto": "otri@upo.es · info@cdti.es", "imagen": "img/CDTI_ECOSISTEMAS_2025_RESUMEN.png", "datosClave": [{"k": "Presupuesto", "v": "14.282.014 € (CDTI y FEDER 2021-2027); Andalucía 6.250.000 €"}, {"k": "Agrupación", "v": "4-8 entidades, actividad en al menos 3 CCAA; mínimo un centro de I+D y una empresa"}, {"k": "Presupuesto por actuación", "v": "120.000 € - 1.000.000 €; mínimo 30.000 € por entidad (10-70 % del total)"}, {"k": "Duración", "v": "Inicio en 2026; fin el 31/12/2027 o el 30/06/2028"}, {"k": "Pago", "v": "Anticipo de hasta el 60 % de la subvención, sin garantías"}, {"k": "Memoria técnica", "v": "Máximo 60 páginas"}], "secciones": [{"titulo": "Objeto", "texto": "Financiación de actuaciones de apoyo al desarrollo de ecosistemas y entornos innovadores interregionales (supra-ecosistemas), orientados a la transferencia, difusión y valorización del conocimiento y a la resolución de retos sociotécnicos compartidos por varias Comunidades Autónomas, con la colaboración de administraciones, centros generadores de conocimiento, empresas (especialmente pymes) y sociedad civil.\n\nEnmarcada en el Plan Complementario de Transferencia de Conocimiento y cofinanciada con fondos FEDER 2021-2027. Las propuestas con 65 puntos o más reciben el Sello de Calidad «Supra ecosistema de Innovación», que puede facilitar el acceso a financiación autonómica."}, {"titulo": "Retos sociotécnicos", "texto": "Cada propuesta debe encuadrarse en un reto principal (obligatorio) y puede añadir otros como secundarios. Si no encaja claramente en ninguno, se desestima.\n- Reto I: Transición ecológica justa y equitativa: sistema agroalimentario integrado de sostenibilidad ambiental, cohesión social y promoción de la salud\n- Reto II: Transición energética hacia un sistema eléctrico robusto, eficiente y sostenible\n- Reto III: Preservar para transformar: el patrimonio vital como vector de desarrollo territorial equilibrado y sostenible\n- Reto IV: Determinantes en salud y cuidado: los nuevos espacios socioeconómicos\n- Reto V: Transformación sistémica hacia una movilidad sostenible, conectada, eficiente y segura\n\nEjes de actuación y objetivos de cada reto: Anexo I de la convocatoria."}, {"titulo": "Beneficiarios y participación de la UPO", "texto": "Agrupaciones de 4 a 8 entidades, sin personalidad jurídica (una actúa como coordinador). Participación por entidad: 10 %-70 % del presupuesto elegible, con mínimo de 30.000 € por entidad.\n\nComposición mínima: al menos una entidad de investigación o transferencia (OPIs, universidades, institutos de investigación, centros tecnológicos y de apoyo a la innovación, OTRI inscritas en el registro del RD 984/2022...) y al menos una empresa o una asociación/fundación representativa de un sector empresarial. Las empresas, en conjunto, hasta el 30 % del presupuesto elegible de la agrupación.\n\nUPO: puede participar como miembro de la agrupación (socio beneficiario) en su condición de universidad, con actividades y personal en Andalucía.\n\nImportante: la participación de la UPO requiere su integración como miembro de la agrupación, con acuerdo de agrupación suscrito por todos los integrantes, y se canaliza siempre a través de la OTRI."}, {"titulo": "Características de las ayudas", "texto": "- Modalidad de proyectos: actuaciones de apoyo a ecosistemas interregionales en cooperación (4 a 8 entidades)\n- Modalidad de participación de la UPO: miembro de la agrupación (socio beneficiario)\n- Ámbito: actividades en al menos 3 de las 16 CCAA con fondos asignados. Cada entidad designa una sola CCAA de desarrollo\n- Duración: plurianual; inicio en 2026 y fin el 31/12/2027 o el 30/06/2028\n- Presupuesto elegible por actuación: entre 120.000 € y 1.000.000 €\n- Presupuesto de la convocatoria: 14.282.014 € (CDTI y FEDER 2021-2027), con límite por CCAA; Andalucía: 6.250.000 €\n- Intensidad de ayuda: subvención. Hasta el 85 % (Andalucía, Castilla-La Mancha, Extremadura), hasta el 60 % (regiones en transición; 85 % en Canarias) y hasta el 40 % (Aragón, Cataluña, Navarra y País Vasco). No inferior al 40 % del presupuesto de la agrupación ni al 25 % del de cada integrante\n- Pago: anticipo de hasta el 60 % de la subvención, sin garantías; el CDTI paga a cada entidad de forma individual\n- Compatibilidad: ayuda de minimis (máx. 300.000 € por empresa en 3 años); no acumulable con otras ayudas cofinanciadas con fondos estructurales para la misma actividad. Los organismos de investigación, en transferencia de conocimiento, quedan fuera de minimis, con máximo de 400.000 € por actuación y entidad\n- Subcontratación: hasta el 50 % del presupuesto elegible de cada integrante; no se puede subcontratar entre miembros de la agrupación"}, {"titulo": "Criterios de evaluación", "texto": "Criterios generales (art. 20.1.j de la Orden CNU/161/2025):\n- Constitución y capacidades del ecosistema: 0-30 puntos (umbral 10)\n- Calidad de la propuesta y plan de actuación: 0-30 puntos\n- Impactos científico-tecnológico, socioeconómico e industrial previstos: 0-40 puntos\n\nSi no se supera el umbral del primer criterio, no se continúa la evaluación. Nota final mínima para ser elegible: 50 puntos (65 o más: Sello de Calidad)."}, {"titulo": "Presentación de solicitudes", "texto": "Vía electrónica: Sede electrónica CDTI (https://sede.cdti.gob.es/).\n\nDocumentación: formulario de solicitud, memoria técnica (Anexo II), acuerdo de agrupación (firmado, o con compromiso de aportarlo en la propuesta de resolución), declaraciones responsables (Anexo IV), ofertas previas de subcontrataciones a partir de 15.000 € si ya están determinadas y, opcionalmente, cartas de apoyo."}, {"titulo": "Plazos", "texto": "Presentación de solicitudes (CDTI): del 17 de diciembre de 2025 al 11 de marzo de 2026, a las 12:00 h (hora peninsular). El plazo inicial (hasta el 12/02/2026) se suspendió en febrero de 2026 y se amplió por Resolución de 18 de febrero de 2026."}, {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es\nJuan A. Pedregal: japedper@admon.upo.es\nCDTI: info@cdti.es"}], "documentos": [{"id": "d1", "nombre": "Resumen visual Ecosistemas 2025", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/CDTI_ECOSISTEMAS_2025_RESUMEN.pptx", "nota": ""}, {"id": "d2", "nombre": "Ficha OTRI UPO Ecosistemas 2025", "tipo": "docx", "categoria": "Ficha OTRI", "url": "docs/cdti/Ficha_OTRI_UPO_Ecosistemas_2025.docx", "nota": ""}]}, {"id": "cdti-innterconecta-step-2026", "nombre": "Innterconecta STEP", "organismo": "CDTI", "tipo": "I+D colaborativa", "edicion": "2026", "resumen": "I+D en cooperación empresarial en tecnologías digitales, limpias y biotecnología, con reserva para salud femenina.", "apertura": "2026-10", "cierre": "2026-11", "resolucion": "2027-06", "resolucionTxt": "1.º semestre 2027", "fechasProvisionales": true, "estadoManual": "", "presupuesto": 138, "participacionUPO": "Subcontratación", "subvencion": "Hasta 80 % pequeña, 75 % mediana y 65 % gran empresa", "tags": ["Digital", "IA", "Ciberseguridad", "Tecnologías limpias", "Biotecnología", "Salud femenina"], "enlace": "https://www.cdti.es/ayudas/innterconecta-step", "contacto": "otri@upo.es", "imagen": "img/INNTERCONECTA_STEP_2026_RESUMEN.png", "datosClave": [{"k": "Presupuesto", "v": "138 M€; Andalucía 18 M€ (13 %)"}, {"k": "Consorcio", "v": "2-6 empresas, de al menos 2 CCAA"}, {"k": "Presupuesto por proyecto", "v": "1-4 M€; mínimo 175.000 € por empresa"}, {"k": "Subcontratación a universidades", "v": "Mínimo 10 % del presupuesto"}, {"k": "Novedades 2026", "v": "10 M€ para salud femenina; Illes Balears elegible; alineación europea"}], "secciones": [{"titulo": "Ámbitos tecnológicos", "texto": "- Tecnologías digitales: IA, ciberseguridad\n- Tecnologías limpias y eficientes: transición energética, economía circular\n- Biotecnología: medicamentos, salud"}, {"titulo": "Requisitos", "texto": "- 2-6 empresas, de al menos 2 CCAA\n- Presupuesto de 1 a 4 M€\n- Mínimo 175.000 € por empresa\n- Mínimo 10 % de subcontratación a universidades\n\nUPO: participa como entidad subcontratada."}, {"titulo": "Novedades 2026", "texto": "- 10 M€ reservados a salud femenina\n- Illes Balears elegible\n- Alineación europea"}, {"titulo": "Calendario", "texto": "Apertura: octubre de 2026\nCierre: noviembre de 2026\nResolución: primer semestre de 2027\n\nFechas provisionales hasta que se publique la convocatoria."}, {"titulo": "Subvención", "texto": "- Pequeña empresa: hasta el 80 %\n- Mediana empresa: hasta el 75 %\n- Gran empresa: hasta el 65 %"}, {"titulo": "Contacto", "texto": "OTRI UPO: otri@upo.es"}], "documentos": [{"id": "d1", "nombre": "Resumen visual Innterconecta STEP 2026", "tipo": "pptx", "categoria": "Resumen", "url": "docs/cdti/INNTERCONECTA_STEP_2026_RESUMEN.pptx", "nota": ""}]}]}</script>
+<script>
+(function(){
+'use strict';
+var LS_KEY='mapaconv.v1', IDB_NAME='mapaconv-files';
+var MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+var EST={abierta:'Abierta',proxima:'Próxima',evaluacion:'En evaluación',resuelta:'Resuelta',cerrada:'Cerrada',sinfechas:'Sin fechas'};
+var EST_RANK={abierta:0,proxima:1,evaluacion:2,resuelta:3,cerrada:3,sinfechas:4};
+var UPO_OPTS=['Subcontratación','Socia de la agrupación','Coordinadora','Beneficiaria directa','Otra'];
+var CATS=['Resumen','Ficha OTRI','Convocatoria oficial','Bases y anexos','Otro'];
+var SEC_DEFAULT=['Objeto','Beneficiarios y participación de la UPO','Características de las ayudas','Criterios de evaluación','Presentación de solicitudes','Plazos','Contacto'];
+var ICON={
+  pencil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m-5-5 5 5 5-5M5 20h14"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'
+};
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
+function uid(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID().slice(0,8):Math.random().toString(36).slice(2,10)}
+function slug(s){return norm(s).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+
+/* ---------- Estado de la aplicación ---------- */
+var base=null, data=null, hasLocal=false, editing=false;
+var ui={q:'',org:[],est:[],tipo:'',upo:'',view:'mapa',sort:{k:'estado',dir:1},open:null,tab:'resumen',docForm:null,lastFocus:null};
+try{var sv=sessionStorage.getItem('mapaconv.view'); if(sv) ui.view=sv}catch(e){}
+
+/* ---------- Almacén de archivos (IndexedDB) ---------- */
+var blobCache={};
+var idb={
+  db:null,
+  open:function(){
+    var self=this;
+    if(self.db) return Promise.resolve(self.db);
+    return new Promise(function(res,rej){
+      try{
+        var r=indexedDB.open(IDB_NAME,1);
+        r.onupgradeneeded=function(){r.result.createObjectStore('files')};
+        r.onsuccess=function(){self.db=r.result;res(self.db)};
+        r.onerror=function(){rej(r.error)};
+      }catch(e){rej(e)}
+    });
+  },
+  tx:function(mode,fn){
+    return this.open().then(function(db){
+      return new Promise(function(res,rej){
+        var t=db.transaction('files',mode), out=fn(t.objectStore('files'));
+        t.oncomplete=function(){res(out&&out.result)};
+        t.onerror=function(){rej(t.error)};
+      });
+    });
+  },
+  put:function(id,blob,name){return this.tx('readwrite',function(s){return s.put({blob:blob,name:name},id)})},
+  get:function(id){return this.tx('readonly',function(s){return s.get(id)})},
+  del:function(id){return this.tx('readwrite',function(s){return s.delete(id)})},
+  clear:function(){return this.tx('readwrite',function(s){return s.clear()})}
+};
+function blobUrl(id){
+  if(blobCache[id]) return Promise.resolve(blobCache[id]);
+  return idb.get(id).then(function(rec){
+    if(!rec||!rec.blob) return null;
+    blobCache[id]=URL.createObjectURL(rec.blob); return blobCache[id];
+  }).catch(function(){return null});
+}
+function isLocal(u){return typeof u==='string'&&u.indexOf('idb:')===0}
+
+/* ---------- Datos ---------- */
+function normConv(c){
+  c=c||{};
+  return {
+    id:c.id||uid(), nombre:c.nombre||'Sin nombre', organismo:c.organismo||'Otro', tipo:c.tipo||'', edicion:c.edicion||'',
+    resumen:c.resumen||'', apertura:c.apertura||'', cierre:c.cierre||'', resolucion:c.resolucion||'', resolucionTxt:c.resolucionTxt||'',
+    fechasProvisionales:!!c.fechasProvisionales, estadoManual:c.estadoManual||'',
+    presupuesto:(c.presupuesto===''||c.presupuesto==null||isNaN(+c.presupuesto))?null:+c.presupuesto,
+    participacionUPO:c.participacionUPO||'', subvencion:c.subvencion||'', tags:Array.isArray(c.tags)?c.tags:[],
+    enlace:c.enlace||'', contacto:c.contacto||'', imagen:c.imagen||'',
+    datosClave:Array.isArray(c.datosClave)?c.datosClave:[], secciones:Array.isArray(c.secciones)?c.secciones:[],
+    documentos:(Array.isArray(c.documentos)?c.documentos:[]).map(function(d){return {id:d.id||uid(),nombre:d.nombre||'Documento',tipo:d.tipo||'',categoria:d.categoria||'Otro',url:d.url||'',nota:d.nota||'',pendiente:!!d.pendiente}})
+  };
+}
+function validData(d){return d&&typeof d==='object'&&Array.isArray(d.convocatorias)}
+function readLocal(){
+  try{var s=localStorage.getItem(LS_KEY); if(!s) return null; var d=JSON.parse(s); return validData(d)?d:null}catch(e){return null}
+}
+function persist(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify(data)); hasLocal=true}
+  catch(e){hasLocal=true; toast('No se pudo guardar en este navegador. Exporta los datos para no perder los cambios.')}
+}
+function byId(id){return data.convocatorias.filter(function(c){return c.id===id})[0]}
+
+/* ---------- Fechas y estado ---------- */
+var DRE=/^(\d{4})-(\d{2})(?:-(\d{2}))?$/;
+function pd(s,end){
+  var m=DRE.exec(s||''); if(!m) return null;
+  var y=+m[1], mo=+m[2]-1; if(mo<0||mo>11) return null;
+  if(m[3]) return new Date(y,mo,+m[3]);
+  return end?new Date(y,mo+1,0):new Date(y,mo,1);
+}
+function hasDay(s){var m=DRE.exec(s||'');return !!(m&&m[3])}
+function fd(s){var m=DRE.exec(s||''); if(!m) return ''; return (m[3]?(+m[3])+' ':'')+MES[+m[2]-1]+' '+m[1]}
+function range(a,c){
+  if(!a&&!c) return 'Sin fechas';
+  if(a&&c&&hasDay(a)&&hasDay(c)&&a.slice(0,4)===c.slice(0,4)){
+    var x=DRE.exec(a), y=DRE.exec(c);
+    return (+x[3])+' '+MES[+x[2]-1]+' – '+(+y[3])+' '+MES[+y[2]-1]+' '+y[1];
+  }
+  return (a?fd(a):'…')+' – '+(c?fd(c):'…');
+}
+function resText(c){return c.resolucionTxt||fd(c.resolucion)}
+function estado(c){
+  if(c.estadoManual&&EST[c.estadoManual]) return c.estadoManual;
+  var a=pd(c.apertura), e=pd(c.cierre,true), r=pd(c.resolucion,true), t=new Date();
+  if(!a&&!e) return 'sinfechas';
+  if(a&&t<a) return 'proxima';
+  if(!e||t<=new Date(e.getFullYear(),e.getMonth(),e.getDate()+1)) return 'abierta';
+  if(r&&t>r) return 'resuelta';
+  return 'evaluacion';
+}
+function sortKey(c){var e=pd(c.cierre,true)||pd(c.apertura)||new Date(2100,0,1);return e.getTime()}
+
+/* ---------- Organismos y colores ---------- */
+function orgList(){
+  var s=[]; data.convocatorias.forEach(function(c){if(s.indexOf(c.organismo)<0) s.push(c.organismo)});
+  var pref=['CDTI','AEI']; s.sort(function(a,b){var ia=pref.indexOf(a),ib=pref.indexOf(b); if(ia<0)ia=9; if(ib<0)ib=9; return ia-ib||a.localeCompare(b)});
+  return s;
+}
+function orgVar(name){
+  if(name==='CDTI') return 'var(--o0)'; if(name==='AEI') return 'var(--o1)';
+  var h=0; for(var i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))>>>0;
+  return 'var(--o'+(2+h%6)+')';
+}
+
+/* ---------- Filtros ---------- */
+function haystack(c){
+  if(c._h) return c._h;
+  var p=[c.nombre,c.organismo,c.tipo,c.edicion,c.resumen,c.participacionUPO,c.subvencion,c.tags.join(' '),c.contacto];
+  c.datosClave.forEach(function(k){p.push(k.k,k.v)});
+  c.secciones.forEach(function(s){p.push(s.titulo,s.texto)});
+  c.documentos.forEach(function(d){p.push(d.nombre,d.categoria,d.nota)});
+  Object.defineProperty(c,'_h',{value:norm(p.join(' ')),enumerable:false,writable:true,configurable:true});
+  return c._h;
+}
+function invalidate(){data.convocatorias.forEach(function(c){delete c._h})}
+function matches(c,skip){
+  if(ui.q){var qs=norm(ui.q).split(/\s+/).filter(Boolean); var h=haystack(c); for(var i=0;i<qs.length;i++) if(h.indexOf(qs[i])<0) return false}
+  if(skip!=='org'&&ui.org.length&&ui.org.indexOf(c.organismo)<0) return false;
+  if(skip!=='est'&&ui.est.length&&ui.est.indexOf(estado(c))<0) return false;
+  if(ui.tipo&&c.tipo!==ui.tipo) return false;
+  if(ui.upo&&c.participacionUPO!==ui.upo) return false;
+  return true;
+}
+function filtered(){
+  return data.convocatorias.filter(function(c){return matches(c)}).sort(function(a,b){
+    var k=ui.sort.k, d=ui.sort.dir, r=0;
+    if(k==='estado') r=EST_RANK[estado(a)]-EST_RANK[estado(b)]||sortKey(a)-sortKey(b);
+    else if(k==='nombre'||k==='organismo'||k==='tipo'||k==='participacionUPO') r=String(a[k]).localeCompare(String(b[k]));
+    else if(k==='apertura'||k==='cierre'||k==='resolucion'){var x=pd(a[k])||new Date(2200,0,1), y=pd(b[k])||new Date(2200,0,1); r=x-y}
+    else if(k==='presupuesto') r=(a.presupuesto==null?-1:a.presupuesto)-(b.presupuesto==null?-1:b.presupuesto);
+    return r*d;
+  });
+}
+
+/* ---------- Texto enriquecido ---------- */
+function inline(s){
+  var h=esc(s);
+  h=h.replace(/(https?:\/\/[^\s<)]+)/g,function(u){return '<a href="'+u+'" target="_blank" rel="noopener">'+u.replace(/^https?:\/\//,'')+'</a>'});
+  h=h.replace(/([A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/g,'<a href="mailto:$1">$1</a>');
+  h=h.replace(/^([^:<>]{2,46}):(\s)/,'<b>$1:</b>$2');
+  return h;
+}
+function rich(text){
+  var out='', ul=false;
+  String(text||'').split('\n').forEach(function(line){
+    var t=line.trim();
+    if(!t){ if(ul){out+='</ul>';ul=false} return }
+    if(/^[-•]\s+/.test(t)){ if(!ul){out+='<ul>';ul=true} out+='<li>'+inline(t.replace(/^[-•]\s+/,''))+'</li>' }
+    else { if(ul){out+='</ul>';ul=false} out+='<p>'+inline(t)+'</p>' }
+  });
+  if(ul) out+='</ul>';
+  return '<div class="rich">'+out+'</div>';
+}
+
+/* ---------- Render general ---------- */
+function render(){
+  renderChrome(); renderFilters(); renderView();
+  if(ui.open) renderDrawer();
+}
+function renderChrome(){
+  var b=$('#btn-edit');
+  b.innerHTML=ICON.pencil+(editing?'Salir de edición':'Editar');
+  b.setAttribute('aria-pressed',editing?'true':'false');
+  b.className='btn '+(editing?'':'primary');
+  var eb=$('#editbar'); eb.hidden=!editing;
+  if(editing){
+    eb.innerHTML='<p><b>Modo edición.</b> Añade o modifica convocatorias y documentos. Los cambios se guardan en este navegador; para publicarlos, exporta los datos.</p>'+
+      '<div class="acts"><button class="btn gold" data-act="add-conv">'+ICON.plus+'Añadir convocatoria</button>'+
+      '<button class="btn" data-act="export">Exportar datos</button><button class="btn" data-act="import">Importar</button>'+
+      (hasLocal?'<button class="btn danger" data-act="reset">Descartar mis cambios</button>':'')+'</div>';
+  }
+  var n=$('#notice'); n.hidden=!(hasLocal&&!editing);
+  if(!n.hidden) n.innerHTML='Estás viendo cambios guardados en este navegador, que todavía no están publicados. <button class="btn small" data-act="toggle-edit">Abrir edición</button>';
+}
+function renderFilters(){
+  var orgs=orgList();
+  var tipos=[], upos=[];
+  data.convocatorias.forEach(function(c){ if(c.tipo&&tipos.indexOf(c.tipo)<0) tipos.push(c.tipo); if(c.participacionUPO&&upos.indexOf(c.participacionUPO)<0) upos.push(c.participacionUPO)});
+  tipos.sort(); upos.sort();
+  if(ui.tipo&&tipos.indexOf(ui.tipo)<0) ui.tipo='';
+  if(ui.upo&&upos.indexOf(ui.upo)<0) ui.upo='';
+  $('#f-tipo').innerHTML='<option value="">Todos los tipos</option>'+tipos.map(function(t){return '<option'+(t===ui.tipo?' selected':'')+'>'+esc(t)+'</option>'}).join('');
+  $('#f-upo').innerHTML='<option value="">Participación UPO: todas</option>'+upos.map(function(t){return '<option'+(t===ui.upo?' selected':'')+'>'+esc(t)+'</option>'}).join('');
+  $('#chips-org').innerHTML='<span class="lbl">Organismo</span>'+orgs.map(function(o){
+    var n=data.convocatorias.filter(function(c){return c.organismo===o&&matches(c,'org')}).length;
+    return '<button class="chip" style="--org:'+orgVar(o)+'" aria-pressed="'+(ui.org.indexOf(o)>=0)+'" data-act="chip-org" data-v="'+esc(o)+'"><span class="dot"></span>'+esc(o)+' <span class="n">'+n+'</span></button>';
+  }).join('');
+  var order=['abierta','proxima','evaluacion','resuelta','cerrada','sinfechas'];
+  $('#chips-est').innerHTML='<span class="lbl">Estado</span>'+order.map(function(e){
+    var n=data.convocatorias.filter(function(c){return estado(c)===e&&matches(c,'est')}).length;
+    if(!n&&ui.est.indexOf(e)<0) return '';
+    return '<button class="chip" aria-pressed="'+(ui.est.indexOf(e)>=0)+'" data-act="chip-est" data-v="'+e+'">'+EST[e]+' <span class="n">'+n+'</span></button>';
+  }).join('')+((ui.q||ui.org.length||ui.est.length||ui.tipo||ui.upo)?'<button class="btn small" data-act="clear">Quitar filtros</button>':'');
+}
+function renderView(){
+  ['mapa','tarjetas','tabla'].forEach(function(v){var t=$('#t-'+v); t.setAttribute('aria-selected',ui.view===v?'true':'false'); t.setAttribute('tabindex',ui.view===v?'0':'-1')});
+  var list=filtered();
+  $('#count').textContent=list.length+' de '+data.convocatorias.length+' convocatorias';
+  var el=$('#view');
+  if(!data.convocatorias.length){
+    el.innerHTML='<div class="empty"><p>Todavía no hay convocatorias.</p>'+(editing?'<button class="btn gold" data-act="add-conv">'+ICON.plus+'Añadir la primera</button>':'<p>Pulsa Editar para añadir la primera.</p>')+'</div>'; return;
+  }
+  if(!list.length){
+    el.innerHTML='<div class="empty"><p>Ninguna convocatoria coincide con los filtros.</p><button class="btn" data-act="clear">Quitar filtros</button></div>'; return;
+  }
+  if(ui.view==='mapa') el.innerHTML=viewMapa(list);
+  else if(ui.view==='tarjetas') el.innerHTML=viewTarjetas(list);
+  else el.innerHTML=viewTabla(list);
+  if(ui.view==='mapa'){
+    var sc=$('.tl-scroll',el), td=$('.today',el);
+    if(sc&&td){ var lab=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--lab'))||232; sc.scrollLeft=Math.max(0,lab+parseFloat(td.getAttribute('data-x'))-sc.clientWidth*0.5) }
+  }
+}
+function pill(c){var e=estado(c); return '<span class="pill st-'+e+'">'+EST[e]+(c.fechasProvisionales&&(e==='abierta'||e==='proxima')?' (prev.)':'')+'</span>'}
+
+/* ---------- Mapa temporal ---------- */
+function viewMapa(list){
+  var LAB=window.innerWidth<=720?150:232, all=[], t=new Date(), MW=64;
+  list.forEach(function(c){[pd(c.apertura),pd(c.cierre,true),pd(c.resolucion,true)].forEach(function(d){if(d) all.push(d)})});
+  var withDates=list.filter(function(c){return pd(c.apertura)||pd(c.cierre,true)});
+  var nod=list.filter(function(c){return !(pd(c.apertura)||pd(c.cierre,true))});
+  all.push(t);
+  var min=new Date(Math.min.apply(null,all)), max=new Date(Math.max.apply(null,all));
+  var y0=min.getFullYear(), m0=min.getMonth()-0;
+  var months=(max.getFullYear()-y0)*12+(max.getMonth()-m0)+3;
+  if(months<10) months=10;
+  var avail=($('#view').clientWidth||1000)-LAB-2;
+  MW=Math.max(46,Math.min(76,Math.floor(avail/months)));
+  var W=months*MW;
+  function dim(d){return new Date(d.getFullYear(),d.getMonth()+1,0).getDate()}
+  function xs(d){return ((d.getFullYear()-y0)*12+(d.getMonth()-m0)+(d.getDate()-1)/dim(d))*MW}
+  function xe(d){return xs(d)+MW/dim(d)}
+  var yrs='', mons='', i, cur=null, cnt=0, seq=[];
+  for(i=0;i<months;i++){var mm=(m0+i)%12, yy=y0+Math.floor((m0+i)/12); seq.push([yy,mm]); mons+='<div style="width:'+MW+'px">'+MES[mm]+'</div>'}
+  seq.forEach(function(s,idx){ if(cur===null||cur!==s[0]){ if(cur!==null) yrs+='<div style="width:'+(cnt*MW)+'px">'+cur+'</div>'; cur=s[0]; cnt=0 } cnt++; if(idx===seq.length-1) yrs+='<div style="width:'+(cnt*MW)+'px">'+cur+'</div>' });
+  var h='<div class="tl"><div class="tl-scroll"><div class="tl-in" style="--w:'+W+'px;--mw:'+MW+'px">';
+  h+='<div class="tl-row tl-head"><div class="tl-lab">Convocatoria</div><div><div class="tl-yrs">'+yrs+'</div><div class="tl-mons">'+mons+'</div></div></div>';
+  var groups=orgList().filter(function(o){return withDates.some(function(c){return c.organismo===o})});
+  groups.forEach(function(o){
+    var items=withDates.filter(function(c){return c.organismo===o}).sort(function(a,b){return (pd(a.apertura)||pd(a.cierre))-(pd(b.apertura)||pd(b.cierre))});
+    h+='<div class="tl-row tl-grp" style="--org:'+orgVar(o)+'"><div class="tl-lab">'+esc(o)+'<span>'+items.length+'</span></div><div class="tl-track"></div></div>';
+    items.forEach(function(c){
+      var a=pd(c.apertura), e=pd(c.cierre,true), r=pd(c.resolucion,true), st=estado(c);
+      var x1=a?xs(a):(e?xe(e)-MW:0), x2=e?xe(e):(a?xs(a)+MW:0), w=Math.max(6,x2-x1);
+      var tr='<button class="bar'+(c.fechasProvisionales?' prov':'')+'" style="left:'+x1+'px;width:'+w+'px" data-act="open" data-id="'+esc(c.id)+'" aria-label="'+esc(c.nombre+', '+range(c.apertura,c.cierre))+'" title="'+esc(c.nombre+' · '+range(c.apertura,c.cierre))+'"></button>';
+      tr+='<span class="tl-d" style="left:'+x1+'px">'+esc(range(c.apertura,c.cierre))+'</span>';
+      if(r){
+        var rx=hasDay(c.resolucion)?xs(r):(xs(new Date(r.getFullYear(),r.getMonth(),1))+MW/2);
+        if(rx>x2) tr+='<span class="evalline" style="left:'+x2+'px;width:'+(rx-x2)+'px"></span>';
+        tr+='<span class="diamond" style="left:'+rx+'px"></span><span class="tl-r" style="left:'+(rx+14)+'px">'+esc(resText(c))+'</span>';
+      } else if(c.resolucionTxt){
+        tr+='<span class="tl-r" style="left:'+(x2+8)+'px">'+esc(c.resolucionTxt)+'</span>';
+      }
+      h+='<div class="tl-row" style="--org:'+orgVar(o)+'"><div class="tl-lab"><button data-act="open" data-id="'+esc(c.id)+'"><span class="tl-name">'+esc(c.nombre)+(c.edicion?' <span class="mono" style="font-weight:400;color:var(--muted)">'+esc(c.edicion)+'</span>':'')+'</span><span class="tl-meta">'+pill(c)+'</span></button></div><div class="tl-track">'+tr+'</div></div>';
+    });
+  });
+  var tx=xs(t);
+  h+='<div class="today" data-x="'+tx+'" style="left:calc(var(--lab) + '+tx+'px)"><b>Hoy '+t.getDate()+' '+MES[t.getMonth()]+'</b></div>';
+  h+='</div></div><div class="legend"><span><i class="lg-bar"></i>Plazo de solicitud</span><span><i class="lg-prov"></i>Fechas provisionales</span><span><i class="lg-ev"></i>Evaluación</span><span><i class="lg-di"></i>Resolución</span><span><i class="lg-td"></i>Hoy</span></div></div>';
+  if(nod.length) h+='<p class="nodates">Sin fechas: '+nod.map(function(c){return '<button class="btn small" data-act="open" data-id="'+esc(c.id)+'">'+esc(c.nombre)+'</button>'}).join(' ')+'</p>';
+  return h;
+}
+
+/* ---------- Tarjetas ---------- */
+function matchNote(c){
+  if(!ui.q) return '';
+  var qs=norm(ui.q).split(/\s+/).filter(Boolean), found=null;
+  for(var i=0;i<c.secciones.length&&!found;i++){var h=norm(c.secciones[i].titulo+' '+c.secciones[i].texto); if(qs.every(function(q){return h.indexOf(q)>=0})) found=c.secciones[i].titulo}
+  if(!found){for(var j=0;j<c.documentos.length;j++){if(qs.every(function(q){return norm(c.documentos[j].nombre).indexOf(q)>=0})){found='documento «'+c.documentos[j].nombre+'»';break}}}
+  return found?'<p class="match">Coincide en: '+esc(found)+'</p>':'';
+}
+function viewTarjetas(list){
+  return '<div class="grid">'+list.map(function(c){
+    return '<article class="card" style="--org:'+orgVar(c.organismo)+'"><div class="card-top"><span class="org">'+esc(c.organismo)+(c.edicion?' · '+esc(c.edicion):'')+'</span>'+pill(c)+'</div>'+
+    '<h3><button data-act="open" data-id="'+esc(c.id)+'">'+esc(c.nombre)+'</button></h3>'+
+    (c.resumen?'<p>'+esc(c.resumen)+'</p>':'')+matchNote(c)+
+    '<dl class="facts"><dt>Plazo</dt><dd class="mono">'+esc(range(c.apertura,c.cierre))+(c.fechasProvisionales?' (prev.)':'')+'</dd>'+
+    (c.presupuesto!=null?'<dt>Presupuesto</dt><dd class="mono">'+fmtM(c.presupuesto)+'</dd>':'')+
+    (c.participacionUPO?'<dt>UPO</dt><dd><span class="upo">'+esc(c.participacionUPO)+'</span></dd>':'')+'</dl>'+
+    '<div class="card-foot"><span>'+c.documentos.length+' documento'+(c.documentos.length===1?'':'s')+'</span>'+(editing?'<button class="btn small edit" data-act="edit-conv" data-id="'+esc(c.id)+'">'+ICON.pencil+'Editar</button>':'<span>Ver ficha →</span>')+'</div></article>';
+  }).join('')+'</div>';
+}
+function fmtM(n){return (Math.round(n*100)/100).toLocaleString('es-ES')+' M€'}
+
+/* ---------- Tabla ---------- */
+function viewTabla(list){
+  var cols=[['nombre','Convocatoria'],['organismo','Organismo'],['tipo','Tipo'],['apertura','Apertura'],['cierre','Cierre'],['resolucion','Resolución'],['presupuesto','Presupuesto'],['participacionUPO','Participación UPO'],['estado','Estado']];
+  var h='<div class="tbl"><table><thead><tr>'+cols.map(function(c){
+    var on=ui.sort.k===c[0];
+    return '<th scope="col" aria-sort="'+(on?(ui.sort.dir>0?'ascending':'descending'):'none')+'"><button data-act="sort" data-k="'+c[0]+'">'+c[1]+(on?(ui.sort.dir>0?' ↑':' ↓'):'')+'</button></th>';
+  }).join('')+'</tr></thead><tbody>';
+  list.forEach(function(c){
+    h+='<tr><td><button class="nm" data-act="open" data-id="'+esc(c.id)+'">'+esc(c.nombre)+'</button>'+(c.edicion?' <span class="mono" style="color:var(--muted)">'+esc(c.edicion)+'</span>':'')+'</td>'+
+      '<td><span class="org" style="--org:'+orgVar(c.organismo)+'">'+esc(c.organismo)+'</span></td><td>'+esc(c.tipo)+'</td>'+
+      '<td class="mono">'+esc(fd(c.apertura))+'</td><td class="mono">'+esc(fd(c.cierre))+'</td><td class="mono">'+esc(resText(c))+'</td>'+
+      '<td class="num">'+(c.presupuesto!=null?fmtM(c.presupuesto):'')+'</td><td>'+esc(c.participacionUPO)+'</td><td>'+pill(c)+'</td></tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+
+/* ---------- Ficha (panel lateral) ---------- */
+function openConv(id,focusEl){
+  if(!byId(id)) return;
+  ui.open=id; ui.tab='resumen'; ui.docForm=null; ui.lastFocus=focusEl||document.activeElement;
+  $('#scrim').hidden=false; $('#drawer').hidden=false;
+  document.body.style.overflow='hidden';
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  renderDrawer(); var x=$('.x',$('#drawer')); if(x) x.focus();
+}
+function closeDrawer(){
+  ui.open=null; ui.docForm=null; $('#scrim').hidden=true; $('#drawer').hidden=true; document.body.style.overflow='';
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  if(ui.lastFocus&&ui.lastFocus.focus&&document.contains(ui.lastFocus)) ui.lastFocus.focus();
+}
+function renderDrawer(){
+  var c=byId(ui.open); if(!c){closeDrawer();return}
+  var d=$('#drawer'), st=estado(c);
+  var h='<div class="d-head"><div class="d-line"><span class="org" style="--org:'+orgVar(c.organismo)+'">'+esc(c.organismo)+(c.tipo?' · '+esc(c.tipo):'')+(c.edicion?' · '+esc(c.edicion):'')+'</span><span style="display:flex;gap:8px;align-items:center">'+pill(c)+'<button class="x" data-act="close" aria-label="Cerrar ficha">'+ICON.close+'</button></span></div>'+
+    '<h2 id="d-title">'+esc(c.nombre)+'</h2>'+(c.resumen?'<p class="d-sum">'+esc(c.resumen)+'</p>':'')+
+    '<div class="d-acts">'+(c.enlace?'<a class="btn small" href="'+esc(c.enlace)+'" target="_blank" rel="noopener">'+ICON.link+'Convocatoria oficial</a>':'')+
+    (editing?'<button class="btn small" data-act="edit-conv" data-id="'+esc(c.id)+'">'+ICON.pencil+'Editar datos</button><button class="btn small" data-act="dup-conv" data-id="'+esc(c.id)+'">Duplicar</button><button class="btn small danger" data-act="del-conv" data-id="'+esc(c.id)+'">Eliminar</button>':'')+'</div>'+
+    '<div class="tabs" role="tablist">'+[['resumen','Resumen'],['ficha','Ficha completa'],['docs','Documentos ('+c.documentos.length+')']].map(function(t){return '<button class="tab" role="tab" aria-selected="'+(ui.tab===t[0])+'" data-act="dtab" data-t="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div></div>';
+  h+='<div class="d-body">';
+  if(ui.tab==='resumen') h+=tabResumen(c);
+  else if(ui.tab==='ficha') h+=tabFicha(c);
+  else h+=tabDocs(c);
+  h+='</div>';
+  d.innerHTML=h;
+  $$('[data-idb]',d).forEach(function(el){
+    blobUrl(el.getAttribute('data-idb')).then(function(u){
+      if(!u){ el.removeAttribute('href'); el.classList.add('btn'); el.textContent='Archivo no disponible aquí'; return }
+      if(el.tagName==='IMG') el.src=u; else el.href=u;
+    });
+  });
+}
+function tabResumen(c){
+  var h='';
+  if(c.imagen){
+    var img=isLocal(c.imagen)?'<img alt="Resumen visual de '+esc(c.nombre)+'" data-idb="'+esc(c.imagen.slice(4))+'">':'<img alt="Resumen visual de '+esc(c.nombre)+'" src="'+esc(c.imagen)+'">';
+    h+='<figure class="shot" style="margin:0">'+img+'</figure>';
+  }
+  h+='<div class="cal"><div><small>Apertura</small><b>'+esc(fd(c.apertura)||'—')+'</b></div><div><small>Cierre</small><b>'+esc(fd(c.cierre)||'—')+'</b></div><div><small>Resolución</small><b>'+esc(resText(c)||'—')+'</b></div></div>';
+  if(c.fechasProvisionales) h+='<p class="hint">Fechas provisionales: se confirmarán cuando se publique la convocatoria.</p>';
+  if(c.participacionUPO) h+='<div class="callout"><b>Participación de la UPO</b>'+esc(c.participacionUPO)+'</div>';
+  var kv=[]; if(c.presupuesto!=null&&!c.datosClave.some(function(k){return /presupuesto/i.test(k.k)})) kv.push({k:'Presupuesto',v:fmtM(c.presupuesto)});
+  if(c.subvencion) kv.push({k:'Intensidad de ayuda',v:c.subvencion});
+  kv=kv.concat(c.datosClave);
+  if(kv.length) h+='<dl class="kv">'+kv.map(function(k){return '<div><dt>'+esc(k.k)+'</dt><dd>'+esc(k.v)+'</dd></div>'}).join('')+'</dl>';
+  if(c.tags.length) h+='<div class="tagrow">'+c.tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join('')+'</div>';
+  if(c.contacto) h+='<div class="sec"><h3>Contacto</h3>'+rich(c.contacto.replace(/\s·\s/g,'\n- ').replace(/^/,'- '))+'</div>';
+  return h;
+}
+function tabFicha(c){
+  if(!c.secciones.length) return '<div class="empty"><p>Esta convocatoria todavía no tiene ficha completa.</p>'+(editing?'<button class="btn" data-act="edit-conv" data-id="'+esc(c.id)+'">Añadir secciones</button>':'')+'</div>';
+  return c.secciones.map(function(s){return '<section class="sec"><h3>'+esc(s.titulo)+'</h3>'+rich(s.texto)+'</section>'}).join('');
+}
+function extOf(s){var m=/\.([a-z0-9]{2,5})(?:[?#].*)?$/i.exec(s||''); return m?m[1].toLowerCase():''}
+function tabDocs(c){
+  var h='<div class="docs">';
+  if(!c.documentos.length) h+='<div class="empty"><p>Esta convocatoria no tiene documentos.</p></div>';
+  c.documentos.forEach(function(d){
+    var loc=isLocal(d.url), ext=(d.tipo||extOf(d.url)||'enlace').toUpperCase();
+    var open;
+    if(loc) open='<a class="btn small" data-idb="'+esc(d.url.slice(4))+'" download="'+esc(d.nombre)+'">'+ICON.down+'Descargar</a>';
+    else if(d.url) open='<a class="btn small" href="'+esc(d.url)+'" '+(/^https?:/i.test(d.url)?'target="_blank" rel="noopener"':'download')+'>'+(/^https?:/i.test(d.url)?ICON.link+'Abrir':ICON.down+'Descargar')+'</a>';
+    else open='<span class="local">Pendiente de subir a docs/</span>';
+    h+='<div class="doc"><span class="ext">'+esc(ext.slice(0,5))+'</span><div><b>'+esc(d.nombre)+'</b><small>'+esc(d.categoria)+(d.nota?' · '+esc(d.nota):'')+'</small>'+(loc?'<small class="local">Solo en este navegador</small>':'')+'</div><div class="acts">'+open+
+      (editing?'<button class="btn small" data-act="doc-edit" data-d="'+esc(d.id)+'">'+ICON.pencil+'Editar</button><button class="btn small danger" data-act="doc-del" data-d="'+esc(d.id)+'">Quitar</button>':'')+'</div></div>';
+  });
+  h+='</div>';
+  if(editing){
+    if(ui.docForm){
+      var cur=ui.docForm.id?c.documentos.filter(function(x){return x.id===ui.docForm.id})[0]:null;
+      h+='<form class="panel" id="doc-form" novalidate><b>'+(cur?'Editar documento':'Añadir documento')+'</b>'+
+        '<div class="cols"><div class="fld"><label for="d-nombre">Nombre</label><input type="text" id="d-nombre" value="'+esc(cur?cur.nombre:'')+'" required></div>'+
+        '<div class="fld"><label for="d-cat">Categoría</label><select id="d-cat">'+CATS.map(function(x){return '<option'+(cur&&cur.categoria===x?' selected':'')+'>'+x+'</option>'}).join('')+'</select></div></div>'+
+        '<div class="fld"><label for="d-file">Adjuntar archivo desde tu ordenador</label><input type="file" id="d-file"><p class="hint">Se guarda solo en este navegador. Para publicarlo, súbelo a la carpeta docs/ del repositorio y pon su ruta abajo.</p></div>'+
+        '<div class="fld"><label for="d-url">O enlace / ruta en el repositorio</label><input type="text" id="d-url" placeholder="docs/aei/Ficha_AEI_PID2025.docx o https://…" value="'+esc(cur&&!isLocal(cur.url)?cur.url:'')+'"></div>'+
+        '<div class="fld"><label for="d-nota">Nota (opcional)</label><input type="text" id="d-nota" value="'+esc(cur?cur.nota:'')+'"></div>'+
+        '<p class="err" id="d-err" role="alert" hidden></p>'+
+        '<div class="bar-acts"><button type="button" class="btn" data-act="doc-cancel">Cancelar</button><button type="submit" class="btn primary">'+(cur?'Guardar documento':'Añadir documento')+'</button></div></form>';
+    } else h+='<div><button class="btn" data-act="doc-add">'+ICON.plus+'Añadir documento</button></div>';
+  }
+  return h;
+}
+
+/* ---------- Diálogos ---------- */
+function showModal(html,narrow){
+  var m=$('#modal'); m.innerHTML='<div class="box'+(narrow?' narrow':'')+'" role="dialog" aria-modal="true">'+html+'</div>'; m.hidden=false;
+  document.body.style.overflow='hidden';
+  var f=$('input,textarea,select,button',m); if(f) f.focus();
+}
+function closeModal(){$('#modal').hidden=true;$('#modal').innerHTML=''; if(!ui.open) document.body.style.overflow=''}
+function toast(msg){var t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(function(){t.hidden=true},3600)}
+function confirmBox(title,text,label,fn){
+  showModal('<h2>'+esc(title)+'</h2><p style="margin:0">'+esc(text)+'</p><div class="bar-acts"><button class="btn" data-act="modal-close">Cancelar</button><button class="btn danger" id="confirm-ok">'+esc(label)+'</button></div>',true);
+  $('#confirm-ok').addEventListener('click',function(){closeModal();fn()});
+}
+
+/* ---------- Formulario de convocatoria ---------- */
+var rowN=0;
+function kvRow(k,v){rowN++;return '<div class="rowx kvrow"><div class="fld"><label for="kk'+rowN+'">Dato</label><input type="text" id="kk'+rowN+'" data-f="k" value="'+esc(k)+'" placeholder="Presupuesto"></div><div class="fld"><label for="kv'+rowN+'">Valor</label><input type="text" id="kv'+rowN+'" data-f="v" value="'+esc(v)+'" placeholder="60 M€"></div><button type="button" class="btn small danger" data-act="row-del" aria-label="Quitar dato" style="margin-top:22px">Quitar</button></div>'}
+function secRow(t,x){rowN++;return '<div class="rowx sec2 secrow"><div class="stack"><div class="fld"><label for="st'+rowN+'">Título de la sección</label><input type="text" id="st'+rowN+'" data-f="t" value="'+esc(t)+'"></div><div class="fld"><label for="sx'+rowN+'">Contenido</label><textarea id="sx'+rowN+'" data-f="x" rows="5">'+esc(x)+'</textarea></div></div><div class="mini" style="flex-direction:column"><button type="button" class="btn small" data-act="row-up" aria-label="Subir sección">↑</button><button type="button" class="btn small" data-act="row-down" aria-label="Bajar sección">↓</button><button type="button" class="btn small danger" data-act="row-del" aria-label="Quitar sección">✕</button></div></div>'}
+function convForm(id){
+  var c=id?byId(id):null, isNew=!c;
+  if(isNew) c=normConv({id:'',nombre:'',organismo:'',secciones:SEC_DEFAULT.map(function(t){return {titulo:t,texto:''}}),datosClave:[{k:'Presupuesto',v:''},{k:'Consorcio',v:''},{k:'Duración',v:''}]});
+  var orgs=orgList(), tipos=[]; data.convocatorias.forEach(function(x){if(x.tipo&&tipos.indexOf(x.tipo)<0) tipos.push(x.tipo)});
+  var h='<h2>'+(isNew?'Añadir convocatoria':'Editar convocatoria')+'</h2><form class="form" id="conv-form" novalidate data-id="'+esc(c.id)+'">'+
+  '<fieldset class="fs"><legend>Identificación</legend><div class="cols">'+
+   '<div class="fld"><label for="f-nombre">Nombre</label><input type="text" id="f-nombre" value="'+esc(isNew?'':c.nombre)+'" required></div>'+
+   '<div class="fld"><label for="f-org">Organismo</label><input type="text" id="f-org" list="dl-org" value="'+esc(isNew?'':c.organismo)+'" placeholder="AEI, CDTI, fundación…" required><datalist id="dl-org">'+orgs.concat(['AEI','CDTI']).filter(function(v,i,a){return a.indexOf(v)===i}).map(function(o){return '<option value="'+esc(o)+'">'}).join('')+'</datalist></div>'+
+   '<div class="fld"><label for="f-tipo2">Tipo</label><input type="text" id="f-tipo2" list="dl-tipo" value="'+esc(c.tipo)+'" placeholder="I+D colaborativa"><datalist id="dl-tipo">'+tipos.map(function(o){return '<option value="'+esc(o)+'">'}).join('')+'</datalist></div>'+
+   '<div class="fld"><label for="f-ed">Edición / año</label><input type="text" id="f-ed" value="'+esc(c.edicion)+'" placeholder="2026"></div></div>'+
+   '<div class="fld"><label for="f-res">Resumen en una frase</label><textarea id="f-res" rows="2">'+esc(c.resumen)+'</textarea></div></fieldset>'+
+  '<fieldset class="fs"><legend>Calendario</legend><div class="cols3">'+
+   '<div class="fld"><label for="f-ap">Apertura</label><input type="text" id="f-ap" value="'+esc(c.apertura)+'" placeholder="2026-05-12" inputmode="numeric"><p class="hint" data-pv="f-ap"></p></div>'+
+   '<div class="fld"><label for="f-ci">Cierre</label><input type="text" id="f-ci" value="'+esc(c.cierre)+'" placeholder="2026-06-12" inputmode="numeric"><p class="hint" data-pv="f-ci"></p></div>'+
+   '<div class="fld"><label for="f-rs">Resolución</label><input type="text" id="f-rs" value="'+esc(c.resolucion)+'" placeholder="2026-11" inputmode="numeric"><p class="hint" data-pv="f-rs"></p></div></div>'+
+   '<p class="hint">Escribe AAAA-MM-DD, o solo AAAA-MM si se conoce el mes. Deja vacío lo que no se sepa.</p>'+
+   '<div class="cols"><div class="fld"><label for="f-rt">Texto de resolución (opcional)</label><input type="text" id="f-rt" value="'+esc(c.resolucionTxt)+'" placeholder="1.º semestre 2027"></div>'+
+   '<div class="fld"><label for="f-es">Estado</label><select id="f-es"><option value="">Automático (según fechas)</option>'+['abierta','proxima','evaluacion','resuelta','cerrada'].map(function(e){return '<option value="'+e+'"'+(c.estadoManual===e?' selected':'')+'>'+EST[e]+'</option>'}).join('')+'</select></div></div>'+
+   '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="f-pv"'+(c.fechasProvisionales?' checked':'')+'> Fechas provisionales (aún sin publicar)</label></fieldset>'+
+  '<fieldset class="fs"><legend>Condiciones</legend><div class="cols">'+
+   '<div class="fld"><label for="f-pr">Presupuesto total (M€)</label><input type="number" id="f-pr" step="0.01" min="0" value="'+(c.presupuesto==null?'':c.presupuesto)+'"></div>'+
+   '<div class="fld"><label for="f-up">Participación de la UPO</label><input type="text" id="f-up" list="dl-up" value="'+esc(c.participacionUPO)+'"><datalist id="dl-up">'+UPO_OPTS.map(function(o){return '<option value="'+o+'">'}).join('')+'</datalist></div></div>'+
+   '<div class="fld"><label for="f-sb">Intensidad de ayuda</label><input type="text" id="f-sb" value="'+esc(c.subvencion)+'" placeholder="Hasta 80 % pequeña empresa…"></div>'+
+   '<div class="cols"><div class="fld"><label for="f-en">Enlace a la convocatoria oficial</label><input type="url" id="f-en" value="'+esc(c.enlace)+'" placeholder="https://"></div>'+
+   '<div class="fld"><label for="f-co">Contacto</label><input type="text" id="f-co" value="'+esc(c.contacto)+'" placeholder="correo1 · correo2"></div></div>'+
+   '<div class="fld"><label for="f-tg">Etiquetas (separadas por comas)</label><input type="text" id="f-tg" value="'+esc(c.tags.join(', '))+'"></div></fieldset>'+
+  '<fieldset class="fs"><legend>Resumen visual</legend><div class="cols"><div class="fld"><label for="f-img">Imagen desde tu ordenador</label><input type="file" id="f-img" accept="image/*"><p class="hint">Se guarda solo en este navegador.</p></div>'+
+   '<div class="fld"><label for="f-imp">O ruta / enlace de la imagen</label><input type="text" id="f-imp" value="'+esc(isLocal(c.imagen)?'':c.imagen)+'" placeholder="img/resumen_aei.png"></div></div></fieldset>'+
+  '<fieldset class="fs"><legend>Datos clave</legend><div id="kvs" style="display:grid;gap:8px">'+c.datosClave.map(function(k){return kvRow(k.k,k.v)}).join('')+'</div><div><button type="button" class="btn small" data-act="kv-add">'+ICON.plus+'Añadir dato</button></div></fieldset>'+
+  '<fieldset class="fs"><legend>Ficha completa</legend><p class="hint">Cada línea que empieza por «- » se muestra como viñeta. Una línea tipo «Duración: 3 años» resalta la etiqueta.</p><div id="secs" style="display:grid;gap:12px">'+c.secciones.map(function(s){return secRow(s.titulo,s.texto)}).join('')+'</div><div><button type="button" class="btn small" data-act="sec-add">'+ICON.plus+'Añadir sección</button></div></fieldset>'+
+  '<p class="err" id="f-err" role="alert" hidden></p>'+
+  '<div class="bar-acts"><button type="button" class="btn" data-act="modal-close">Cancelar</button><button type="submit" class="btn primary">Guardar</button></div></form>';
+  showModal(h);
+  $$('[data-pv]').forEach(function(p){updatePv(p.getAttribute('data-pv'))});
+}
+function updatePv(id){
+  var i=$('#'+id); if(!i) return; var p=$('[data-pv="'+id+'"]'); if(!p) return;
+  var v=i.value.trim();
+  if(!v){p.textContent='';return}
+  p.textContent=pd(v)?('→ '+fd(v)):'Formato no válido';
+  p.style.color=pd(v)?'':'var(--danger)';
+}
+function saveConv(form){
+  var err=$('#f-err'); err.hidden=true;
+  function fail(m){err.textContent=m;err.hidden=false;err.scrollIntoView({block:'nearest'});return false}
+  var nombre=$('#f-nombre').value.trim(), org=$('#f-org').value.trim();
+  if(!nombre) return fail('Escribe el nombre de la convocatoria.');
+  if(!org) return fail('Indica el organismo (por ejemplo AEI).');
+  var ap=$('#f-ap').value.trim(), ci=$('#f-ci').value.trim(), rs=$('#f-rs').value.trim();
+  var bad=[['Apertura',ap],['Cierre',ci],['Resolución',rs]].filter(function(x){return x[1]&&!pd(x[1])});
+  if(bad.length) return fail('Fecha no válida en: '+bad.map(function(x){return x[0]}).join(', ')+'. Usa AAAA-MM-DD o AAAA-MM.');
+  var pa=pd(ap), pc=pd(ci,true); if(pa&&pc&&pc<pa) return fail('El cierre es anterior a la apertura.');
+  var en=$('#f-en').value.trim(); if(en&&!/^https?:\/\//i.test(en)) return fail('El enlace oficial debe empezar por http:// o https://.');
+  var id=form.getAttribute('data-id'), old=id?byId(id):null;
+  var obj=normConv({
+    id:old?old.id:null, nombre:nombre, organismo:org, tipo:$('#f-tipo2').value.trim(), edicion:$('#f-ed').value.trim(), resumen:$('#f-res').value.trim(),
+    apertura:ap, cierre:ci, resolucion:rs, resolucionTxt:$('#f-rt').value.trim(), fechasProvisionales:$('#f-pv').checked, estadoManual:$('#f-es').value,
+    presupuesto:$('#f-pr').value, participacionUPO:$('#f-up').value.trim(), subvencion:$('#f-sb').value.trim(),
+    tags:$('#f-tg').value.split(',').map(function(s){return s.trim()}).filter(Boolean), enlace:en, contacto:$('#f-co').value.trim(),
+    imagen:old?old.imagen:'', documentos:old?old.documentos:[],
+    datosClave:$$('.kvrow').map(function(r){return {k:$('[data-f=k]',r).value.trim(),v:$('[data-f=v]',r).value.trim()}}).filter(function(x){return x.k&&x.v}),
+    secciones:$$('.secrow').map(function(r){return {titulo:$('[data-f=t]',r).value.trim(),texto:$('[data-f=x]',r).value.trim()}}).filter(function(x){return x.titulo||x.texto}).map(function(x){return {titulo:x.titulo||'Sección',texto:x.texto}})
+  });
+  if(!old){ var b=slug(org+'-'+nombre+(obj.edicion?'-'+obj.edicion:'')), n=b, i=2; while(byId(n)) n=b+'-'+(i++); obj.id=n }
+  var imgPath=$('#f-imp').value.trim(), imgFile=$('#f-img').files[0];
+  function done(){
+    if(old) data.convocatorias[data.convocatorias.indexOf(old)]=obj; else data.convocatorias.push(obj);
+    invalidate(); persist(); closeModal(); render();
+    if(!old||ui.open===obj.id){ openConv(obj.id) } toast(old?'Cambios guardados':'Convocatoria añadida');
+  }
+  if(imgFile){
+    var iid=uid(); idb.put(iid,imgFile,imgFile.name).then(function(){ obj.imagen='idb:'+iid; done() }).catch(function(){ obj.imagen=imgPath; toast('No se pudo guardar la imagen en este navegador'); done() });
+  } else { obj.imagen=imgPath||(old&&isLocal(old.imagen)?old.imagen:''); done(); }
+  return true;
+}
+
+/* ---------- Documentos ---------- */
+function saveDoc(){
+  var c=byId(ui.open), err=$('#d-err'); err.hidden=true;
+  var nombre=$('#d-nombre').value.trim(), url=$('#d-url').value.trim(), file=$('#d-file').files[0], nota=$('#d-nota').value.trim(), cat=$('#d-cat').value;
+  var cur=ui.docForm.id?c.documentos.filter(function(x){return x.id===ui.docForm.id})[0]:null;
+  if(!nombre){err.textContent='Escribe un nombre para el documento.';err.hidden=false;return}
+  if(!file&&!url&&!(cur&&cur.url)){err.textContent='Adjunta un archivo o escribe un enlace o ruta.';err.hidden=false;return}
+  var d=cur||{id:uid()};
+  d.nombre=nombre; d.categoria=cat; d.nota=nota; d.pendiente=false;
+  function fin(){
+    d.tipo=extOf(file?file.name:(url||cur&&cur.url))||d.tipo||'';
+    if(!cur) c.documentos.push(d);
+    ui.docForm=null; invalidate(); persist(); render(); toast('Documento guardado');
+  }
+  if(file){
+    if(file.size>25*1024*1024){err.textContent='El archivo supera los 25 MB. Súbelo al repositorio y usa su ruta.';err.hidden=false;return}
+    var fid=uid(); idb.put(fid,file,file.name).then(function(){ d.url='idb:'+fid; fin() }).catch(function(){err.textContent='Este navegador no permite guardar archivos. Usa un enlace o ruta del repositorio.';err.hidden=false});
+  } else { if(url||!cur) d.url=url; fin(); }
+}
+
+/* ---------- Exportar / importar ---------- */
+function exportObj(){
+  var o=clone(data); o.exportado=new Date().toISOString().slice(0,10); var pend=[];
+  o.convocatorias.forEach(function(c){
+    if(isLocal(c.imagen)){pend.push('Imagen de «'+c.nombre+'»'); c.imagen=''}
+    c.documentos.forEach(function(d){ if(isLocal(d.url)){pend.push(d.nombre+' (en «'+c.nombre+'»)'); d.url=''; d.pendiente=true} });
+  });
+  return {json:JSON.stringify(o,null,2),pend:pend};
+}
+function showExport(){
+  var e=exportObj();
+  showModal('<h2>Exportar datos</h2><p style="margin:0">Este es el contenido de <b>data.json</b> con todos tus cambios.</p>'+
+   '<ol class="how"><li>Descarga el archivo (o copia el texto).</li><li>En tu repositorio de GitHub, reemplaza <span class="mono">data.json</span> por este archivo.</li><li>Sube a <span class="mono">docs/</span> los documentos nuevos, con la misma ruta que indicaste.</li></ol>'+
+   (e.pend.length?'<p class="err" style="color:var(--soon)">Estos archivos solo existen en este navegador y hay que subirlos al repositorio: '+esc(e.pend.join('; '))+'. Descárgalos desde su ficha, pestaña Documentos, y edita el documento para poner su ruta.</p>':'')+
+   '<pre class="out" id="ex-out" tabindex="0"></pre><div class="bar-acts"><button class="btn" data-act="modal-close">Cerrar</button><button class="btn" data-act="ex-copy">Copiar texto</button><button class="btn primary" data-act="ex-down">'+ICON.down+'Descargar data.json</button></div>');
+  $('#ex-out').textContent=e.json; showExport.json=e.json;
+}
+function showImport(){
+  showModal('<h2>Importar datos</h2><p style="margin:0">Carga un <span class="mono">data.json</span> exportado antes, por ejemplo desde otro ordenador.</p>'+
+   '<div class="fld"><label for="im-file">Archivo data.json</label><input type="file" id="im-file" accept=".json,application/json"></div>'+
+   '<div class="fld"><label for="im-txt">O pega el contenido</label><textarea id="im-txt" rows="6" class="mono"></textarea></div>'+
+   '<div class="fld"><label for="im-mode">Qué hacer con los datos actuales</label><select id="im-mode"><option value="merge">Combinar: añadir nuevas y actualizar las que tengan el mismo id</option><option value="replace">Reemplazar todo</option></select></div>'+
+   '<p class="err" id="im-err" role="alert" hidden></p><div class="bar-acts"><button class="btn" data-act="modal-close">Cancelar</button><button class="btn primary" data-act="im-go">Importar</button></div>');
+  $('#im-file').addEventListener('change',function(){var f=this.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){$('#im-txt').value=r.result}; r.readAsText(f)});
+}
+function doImport(){
+  var er=$('#im-err'); er.hidden=true; var d;
+  try{d=JSON.parse($('#im-txt').value)}catch(e){er.textContent='El texto no es un JSON válido.';er.hidden=false;return}
+  if(!validData(d)){er.textContent='El archivo no tiene la lista «convocatorias».';er.hidden=false;return}
+  var inc=d.convocatorias.map(normConv);
+  if($('#im-mode').value==='replace') data.convocatorias=inc;
+  else inc.forEach(function(n){var i=-1; data.convocatorias.forEach(function(c,k){if(c.id===n.id) i=k}); if(i>=0) data.convocatorias[i]=n; else data.convocatorias.push(n)});
+  invalidate(); persist(); closeModal(); render(); toast('Datos importados');
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest('[data-act]'); if(!t) return;
+  var a=t.getAttribute('data-act'), id=t.getAttribute('data-id');
+  switch(a){
+    case 'toggle-edit': editing=!editing; if(!editing){ui.docForm=null} render(); break;
+    case 'open': openConv(id,t); break;
+    case 'close': closeDrawer(); break;
+    case 'dtab': ui.tab=t.getAttribute('data-t'); ui.docForm=null; renderDrawer(); break;
+    case 'view': ui.view=t.getAttribute('data-v'); try{sessionStorage.setItem('mapaconv.view',ui.view)}catch(e){} renderView(); break;
+    case 'chip-org': toggle(ui.org,t.getAttribute('data-v')); renderFilters(); renderView(); break;
+    case 'chip-est': toggle(ui.est,t.getAttribute('data-v')); renderFilters(); renderView(); break;
+    case 'clear': ui.q='';ui.org=[];ui.est=[];ui.tipo='';ui.upo=''; $('#q').value=''; renderFilters(); renderView(); break;
+    case 'sort': var k=t.getAttribute('data-k'); ui.sort=(ui.sort.k===k)?{k:k,dir:-ui.sort.dir}:{k:k,dir:1}; renderView(); break;
+    case 'add-conv': convForm(null); break;
+    case 'edit-conv': convForm(id); break;
+    case 'dup-conv': var s=byId(id), cp=normConv(clone(s)); cp.id=slug(cp.organismo+'-'+cp.nombre+'-copia-'+uid().slice(0,3)); cp.nombre=s.nombre+' (copia)'; cp.documentos=cp.documentos.filter(function(d){return !isLocal(d.url)}); data.convocatorias.push(cp); invalidate(); persist(); render(); openConv(cp.id); toast('Convocatoria duplicada'); break;
+    case 'del-conv': var dc=byId(id); confirmBox('Eliminar convocatoria','Se eliminará «'+dc.nombre+'» con su ficha y sus documentos. Esta acción no se puede deshacer, salvo que no hayas guardado cambios en otro sitio.','Eliminar',function(){
+        dc.documentos.forEach(function(d){if(isLocal(d.url)) idb.del(d.url.slice(4)).catch(function(){})});
+        data.convocatorias=data.convocatorias.filter(function(c){return c.id!==id}); invalidate(); persist(); closeDrawer(); render(); toast('Convocatoria eliminada')}); break;
+    case 'modal-close': closeModal(); break;
+    case 'kv-add': $('#kvs').insertAdjacentHTML('beforeend',kvRow('','')); $$('.kvrow input').slice(-2)[0].focus(); break;
+    case 'sec-add': $('#secs').insertAdjacentHTML('beforeend',secRow('','')); $$('.secrow input').slice(-1)[0].focus(); break;
+    case 'row-del': var r=t.closest('.rowx'); r.parentNode.removeChild(r); break;
+    case 'row-up': var ru=t.closest('.rowx'); if(ru.previousElementSibling) ru.parentNode.insertBefore(ru,ru.previousElementSibling); break;
+    case 'row-down': var rd=t.closest('.rowx'); if(rd.nextElementSibling) rd.nextElementSibling.after(rd); break;
+    case 'doc-add': ui.docForm={id:null}; renderDrawer(); $('#d-nombre').focus(); break;
+    case 'doc-edit': ui.docForm={id:t.getAttribute('data-d')}; renderDrawer(); $('#d-nombre').focus(); break;
+    case 'doc-cancel': ui.docForm=null; renderDrawer(); break;
+    case 'doc-del': var cc=byId(ui.open), dd=cc.documentos.filter(function(x){return x.id===t.getAttribute('data-d')})[0];
+      confirmBox('Quitar documento','Se quitará «'+dd.nombre+'» de esta convocatoria. El archivo del repositorio no se borra.','Quitar',function(){
+        if(isLocal(dd.url)) idb.del(dd.url.slice(4)).catch(function(){});
+        cc.documentos=cc.documentos.filter(function(x){return x!==dd}); invalidate(); persist(); render(); toast('Documento quitado')}); break;
+    case 'export': showExport(); break;
+    case 'ex-copy': var txt=showExport.json; (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject()).then(function(){toast('Texto copiado')}).catch(function(){var p=$('#ex-out'); var rg=document.createRange(); rg.selectNodeContents(p); var sl=getSelection(); sl.removeAllRanges(); sl.addRange(rg); toast('Selecciona y copia con Ctrl+C')}); break;
+    case 'ex-down': try{var bl=new Blob([showExport.json],{type:'application/json'}), u=URL.createObjectURL(bl), l=document.createElement('a'); l.href=u; l.download='data.json'; document.body.appendChild(l); l.click(); l.remove(); setTimeout(function(){URL.revokeObjectURL(u)},4000); toast('Si no se descarga, usa «Copiar texto»')}catch(e){toast('Usa «Copiar texto»')} break;
+    case 'import': showImport(); break;
+    case 'im-go': doImport(); break;
+    case 'reset': confirmBox('Descartar mis cambios','Se borran los cambios guardados en este navegador y se vuelve a los datos publicados. Los archivos adjuntados desde tu ordenador también se borran.','Descartar',function(){
+        try{localStorage.removeItem(LS_KEY)}catch(e){} idb.clear().catch(function(){}); blobCache={}; data=clone(base); hasLocal=false; closeDrawer(); render(); toast('Datos publicados restaurados')}); break;
+  }
+});
+document.addEventListener('submit',function(ev){
+  ev.preventDefault();
+  if(ev.target.id==='conv-form') saveConv(ev.target);
+  else if(ev.target.id==='doc-form') saveDoc();
+});
+document.addEventListener('input',function(ev){
+  var t=ev.target;
+  if(t.id==='q'){ui.q=t.value; renderFilters(); renderView()}
+  else if(t.id==='f-ap'||t.id==='f-ci'||t.id==='f-rs') updatePv(t.id);
+});
+document.addEventListener('change',function(ev){
+  var t=ev.target;
+  if(t.id==='f-tipo'){ui.tipo=t.value; renderView(); renderFilters()}
+  else if(t.id==='f-upo'){ui.upo=t.value; renderView(); renderFilters()}
+});
+document.addEventListener('keydown',function(ev){
+  if(ev.key!=='Escape') return;
+  if(!$('#modal').hidden) closeModal(); else if(ui.open) closeDrawer();
+});
+$('#modal').addEventListener('mousedown',function(ev){if(ev.target===this) closeModal()});
+function toggle(arr,v){var i=arr.indexOf(v); if(i<0) arr.push(v); else arr.splice(i,1)}
+window.addEventListener('resize',function(){clearTimeout(window.__rz); window.__rz=setTimeout(function(){if(ui.view==='mapa'){renderView()}},150)});
+window.addEventListener('hashchange',function(){var h=location.hash.slice(1); if(h&&byId(h)&&ui.open!==h) openConv(h)});
+
+function normData(d){var o=clone(d); o.convocatorias=o.convocatorias.map(normConv); return o}
+
+/* ---------- Arranque ---------- */
+function init(){
+  var seed=null; try{seed=JSON.parse($('#seed').textContent)}catch(e){}
+  fetch('data.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(pub){
+    base=normData(validData(pub)?pub:(validData(seed)?seed:{convocatorias:[]}));
+    var loc=readLocal();
+    if(loc){data=normData(loc);hasLocal=true} else {data=clone(base)}
+    render();
+    var h=location.hash.slice(1); if(h&&byId(h)) openConv(h);
+  });
+}
+init();
+})();
+</script>
+
+</body>
+</html>
